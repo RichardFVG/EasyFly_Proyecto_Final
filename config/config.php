@@ -7,7 +7,7 @@ define('DB_USER', 'root');
 define('DB_PASS', '');
 
 // API KEYS (rellenar con tus claves reales)
-define('MAILJET_API_PUBLIC', 'TU_API_PUBLICA_MAILJET');
-define('MAILJET_API_PRIVATE', 'TU_API_PRIVADA_MAILJET');
+define('MAILJET_API_PUBLIC', 'b202e7778b9637602c4d8fb04b91c499');
+define('MAILJET_API_PRIVATE', '80c87ad5670a6b953db04a462f117eef');
 define('OPENWEATHER_KEY', 'TU_API_OPENWEATHER');
 ?>
