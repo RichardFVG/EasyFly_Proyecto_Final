@@ -6,7 +6,7 @@ function sendConfirmation($toEmail, $toName, $details){
     $bodyHtml = '<h2>Confirmación de tu Reserva EasyFly</h2><p>'.htmlspecialchars($details).'</p>';
     $data = [
         'Messages' => [[
-            'From' => ['Email' => 'no-reply@easyfly.local', 'Name' => 'EasyFly'],
+            'From' => ['Email' => 'confirmacionreservavuelo@proyectofinaleasyfly.fun', 'Name' => 'EasyFly'],
             'To' => [[ 'Email' => $toEmail, 'Name' => $toName ]],
             'Subject' => 'Tu reserva en EasyFly',
             'HTMLPart' => $bodyHtml
