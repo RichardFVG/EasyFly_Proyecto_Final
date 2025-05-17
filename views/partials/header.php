@@ -1,4 +1,3 @@
-
 <?php 
 require_once __DIR__ . '/../../helpers/Weather.php';
 Auth::start();
@@ -8,7 +7,8 @@ $weather=getWeatherData();
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>EasyFly</title>
+<title>EasyFly - RFVG</title>
+<link rel="icon" type="image/png" href="https://i.postimg.cc/dVSggc3v/RFVG.png">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="assets/css/style.css" rel="stylesheet">
 </head>
