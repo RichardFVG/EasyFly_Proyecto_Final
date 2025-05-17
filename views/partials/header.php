@@ -1,3 +1,4 @@
+
 <?php 
 require_once __DIR__ . '/../../helpers/Weather.php';
 Auth::start();
