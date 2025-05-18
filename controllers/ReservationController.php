@@ -8,6 +8,9 @@ class ReservationController {
         $this->pdo = $pdo;
     }
 
+    /* ------------------------------------------------------------------
+     * CREAR UNA NUEVA RESERVA
+     * ------------------------------------------------------------------ */
     public function reserve(){
         Auth::start();
         if (!Auth::check()){
@@ -34,22 +37,53 @@ class ReservationController {
         }
 
         $details = "Destino: {$flight['pais_destino']}<br>Código: {$code}";
-        // ------------------------------------------------------------------
-        // Ahora la función está definida porque ya incluimos helpers/Mail.php
-        // ------------------------------------------------------------------
         sendConfirmation(Auth::user()['email'], Auth::user()['nombre'], $details);
 
         require __DIR__ . '/../views/confirm.php';
     }
 
+    /* ------------------------------------------------------------------
+     * ELIMINAR UNA RESERVA
+     *
+     * • El administrador puede borrar cualquier reserva y regresa
+     *   al panel de administración.
+     * • Un usuario corriente sólo puede borrar sus propias reservas
+     *   y vuelve a su perfil.
+     * ------------------------------------------------------------------ */
     public function delete(){
-        if (!Auth::isAdmin()){
+        Auth::start();
+
+        $id = intval($_GET['id'] ?? 0);
+        if ($id <= 0){
             header('Location: default.php');
             exit;
         }
-        $id = intval($_GET['id'] ?? 0);
+
+        /* ¿De quién es la reserva? */
+        $stmt = $this->pdo->prepare('SELECT usuario_id FROM reservas WHERE id = ?');
+        $stmt->execute([$id]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row){
+            header('Location: default.php');       // reserva inexistente
+            exit;
+        }
+
+        $isOwner = Auth::check() && Auth::user()['id'] == $row['usuario_id'];
+        $isAdmin = Auth::isAdmin();
+
+        if (!$isOwner && !$isAdmin){
+            header('Location: default.php');       // intento no autorizado
+            exit;
+        }
+
         (new ReservationModel($this->pdo))->delete($id);
-        header('Location: default.php?controller=admin&action=reservations');
+
+        if ($isAdmin){
+            header('Location: default.php?controller=admin&action=reservations');
+        } else {
+            header('Location: default.php?controller=user&action=profile');
+        }
     }
 }
 ?>
