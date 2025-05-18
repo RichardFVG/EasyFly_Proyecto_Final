@@ -62,5 +62,31 @@ class UserController {
 
         require __DIR__ . '/../views/profile.php';
     }
+
+    /** Elimina la cuenta del usuario no-administrador actual */
+    public function deleteAccount(){
+        Auth::start();
+
+        if (!Auth::check()){
+            header('Location: default.php');
+            exit;
+        }
+
+        // No permitir borrar la cuenta admin
+        if (Auth::isAdmin()){
+            header('Location: default.php');
+            exit;
+        }
+
+        $id = Auth::user()['id'];
+
+        // Elimina el usuario (y en cascada sus reservas)
+        $this->model->delete($id);
+
+        // Cerrar sesión y redirigir al inicio
+        Auth::logout();
+        header('Location: default.php');
+        exit;
+    }
 }
 ?>

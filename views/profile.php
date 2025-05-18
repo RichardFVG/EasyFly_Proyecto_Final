@@ -34,4 +34,14 @@
     </tbody>
 </table>
 
+<?php if (!Auth::isAdmin()): ?>
+<hr>
+<h3>Otras opciones de la cuenta</h3>
+<a href="default.php?controller=user&action=deleteAccount"
+   class="btn btn-outline-danger"
+   onclick="return confirm('¿Seguro que deseas borrar tu cuenta? Esta acción eliminará también todas tus reservas y no se puede deshacer.');">
+   Borrar Cuenta
+</a>
+<?php endif; ?>
+
 <?php include __DIR__.'/partials/footer.php'; ?>
