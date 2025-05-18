@@ -8,7 +8,11 @@ $weather = getWeatherData();
 <head>
 <meta charset="UTF-8">
 <title>EasyFly - RFVG</title>
+
+<!-- Favicon ----------------------------------------------------------------->
 <link rel="icon" type="image/png" href="https://i.postimg.cc/dVSggc3v/RFVG.png">
+
+<!-- Bootstrap & hoja de estilos -------------------------------------------->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="assets/css/style.css" rel="stylesheet">
 </head>
@@ -16,9 +20,14 @@ $weather = getWeatherData();
 
 <nav class="navbar navbar-dark bg-primary mb-3"><!-- sin “navbar-expand” ⇒ siempre colapsado -->
   <div class="container">
-    <a class="navbar-brand" href="default.php">EasyFly</a>
 
-    <!-- Botón hamburguesa con el SVG proporcionado -->
+    <!-- Marca (logo + texto) ------------------------------------------------->
+    <a class="navbar-brand d-flex align-items-center" href="default.php">
+        <img src="assets/img/RFVG.png" alt="Logo EasyFly" class="logo-img">
+        <span>EasyFly</span>
+    </a>
+
+    <!-- Botón hamburguesa ---------------------------------------------------->
     <button class="navbar-toggler border-0" type="button"
             data-bs-toggle="collapse" data-bs-target="#navMenu"
             aria-controls="navMenu" aria-expanded="false" aria-label="Menú de navegación">
@@ -39,7 +48,7 @@ $weather = getWeatherData();
         </svg>
     </button>
 
-    <!-- Opciones de usuario dentro del menú -->
+    <!-- Opciones de usuario -------------------------------------------------->
     <div class="collapse navbar-collapse" id="navMenu">
       <ul class="navbar-nav ms-auto text-center">
         <?php if (Auth::check()): ?>

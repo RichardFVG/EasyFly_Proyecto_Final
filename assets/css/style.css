@@ -18,3 +18,17 @@ body.bg-light {
         margin: 0.3rem 0;
     }
 }
+
+/* ----------  Logo en la barra de navegación  ---------- */
+.navbar-brand .logo-img{
+    height: 40px;          /* alto lógico para pantallas ≥576 px      */
+    width: auto;
+    margin-right: .5rem;   /* separación del texto “EasyFly”          */
+}
+
+/* Ajuste de tamaño en móviles muy pequeños */
+@media (max-width: 575.98px){
+    .navbar-brand .logo-img{
+        height: 32px;
+    }
+}
