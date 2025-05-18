@@ -21,7 +21,7 @@ body.bg-light {
 
 /* ----------  Logo en la barra de navegación  ---------- */
 .navbar-brand .logo-img{
-    height: 40px;          /* alto lógico para pantallas ≥576 px      */
+    height: 40px;          /* alto lógico para pantallas ≥576 px      */
     width: auto;
     margin-right: .5rem;   /* separación del texto “EasyFly”          */
 }
@@ -30,5 +30,20 @@ body.bg-light {
 @media (max-width: 575.98px){
     .navbar-brand .logo-img{
         height: 32px;
+    }
+}
+
+/* ----------  Nombre de usuario en la barra de navegación  ---------- */
+.user-name{
+    color: #ffffff;
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 1;
+}
+
+/* Ocultar el nombre en pantallas muy pequeñas (< 576 px) */
+@media (max-width: 575.98px){
+    .user-name{
+        display: none !important;
     }
 }

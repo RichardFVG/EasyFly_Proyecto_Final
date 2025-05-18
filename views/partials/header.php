@@ -27,6 +27,13 @@ $weather = getWeatherData();
         <span>EasyFly</span>
     </a>
 
+    <!-- Nombre del usuario (admin ⇒ “Administrador”) ------------------------>
+    <?php if (Auth::check()): ?>
+      <span class="navbar-text user-name ms-auto me-2 d-none d-sm-inline">
+        <?= Auth::isAdmin() ? 'Administrador' : htmlspecialchars(Auth::user()['nombre']) ?>
+      </span>
+    <?php endif; ?>
+
     <!-- Botón hamburguesa ---------------------------------------------------->
     <button class="navbar-toggler border-0" type="button"
             data-bs-toggle="collapse" data-bs-target="#navMenu"
