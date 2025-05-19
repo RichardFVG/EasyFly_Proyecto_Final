@@ -5,13 +5,10 @@ body.bg-light {
 
 /* ----------  Menú hamburguesa (responsive)  ---------- */
 @media (max-width: 991.98px) {
-    /* El bloque colapsado ocupa toda la anchura y hereda el color de la barra */
     .navbar-collapse {
         background-color: #0d6efd;      /* mismo azul que .bg-primary             */
         padding: 1rem;                  /* respiración alrededor de los enlaces   */
     }
-
-    /* Enlaces dentro del menú, blancos y un poco más gruesos */
     .navbar-collapse .nav-link {
         color: #ffffff !important;
         font-weight: 500;
@@ -45,5 +42,25 @@ body.bg-light {
 @media (max-width: 575.98px){
     .user-name{
         display: none !important;
+    }
+}
+
+/* ----------  Banderas de destinos  ---------- */
+.destinations{
+    display: flex;
+    flex-wrap: wrap;                 /* permite varias filas en pantallas estrechas */
+    justify-content: center;
+    gap: 1rem;                       /* separación uniforme entre imágenes          */
+    margin-top: 1.5rem;
+}
+
+.destinations .dest-img{
+    height: 48px;                    /* tamaño base                                 */
+    width: auto;
+}
+
+@media (max-width: 575.98px){
+    .destinations .dest-img{
+        height: 40px;                /* un poco más pequeñas en móviles muy chicos  */
     }
 }
