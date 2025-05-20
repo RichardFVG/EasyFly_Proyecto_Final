@@ -9,12 +9,14 @@ class UserController {
         $this->model = new UserModel($pdo);
     }
 
+    /** Login: ahora acepta “identifier” (email o nombre) + password */
     public function login(){
         if ($_SERVER['REQUEST_METHOD'] === 'POST'){
-            $email = $_POST['email']    ?? '';
-            $pass  = $_POST['password'] ?? '';
+            $identifier = trim($_POST['identifier'] ?? '');
+            $pass       = $_POST['password'] ?? '';
 
-            $u = $this->model->findByEmail($email);
+            // nuevo método que busca por email O por nombre
+            $u = $this->model->findByIdentifier($identifier);
 
             if ($u && password_verify($pass, $u['password'])){
                 Auth::login($u);
@@ -47,7 +49,6 @@ class UserController {
         header('Location: default.php');
     }
 
-    /** Muestra las reservas del usuario logueado */
     public function profile(){
         Auth::start();
 
@@ -56,14 +57,12 @@ class UserController {
             exit;
         }
 
-        // usamos la conexión almacenada
         $reservations = (new ReservationModel($this->pdo))
                             ->userReservations(Auth::user()['id']);
 
         require __DIR__ . '/../views/profile.php';
     }
 
-    /** Elimina la cuenta del usuario no-administrador actual */
     public function deleteAccount(){
         Auth::start();
 
@@ -72,18 +71,13 @@ class UserController {
             exit;
         }
 
-        // No permitir borrar la cuenta admin
         if (Auth::isAdmin()){
             header('Location: default.php');
             exit;
         }
 
         $id = Auth::user()['id'];
-
-        // Elimina el usuario (y en cascada sus reservas)
         $this->model->delete($id);
-
-        // Cerrar sesión y redirigir al inicio
         Auth::logout();
         header('Location: default.php');
         exit;

@@ -9,9 +9,19 @@ class UserModel {
         return $stmt->execute([$name,$email,password_hash($pass,PASSWORD_BCRYPT)]);
     }
 
+    /** Busca por email exclusivamente (uso interno antiguo) */
     public function findByEmail($email){
         $stmt=$this->db->prepare('SELECT * FROM usuarios WHERE email=?');
         $stmt->execute([$email]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /** NUEVO: busca por email **o** por nombre de usuario */
+    public function findByIdentifier($identifier){
+        $stmt = $this->db->prepare(
+            'SELECT * FROM usuarios WHERE email = ? OR nombre = ?'
+        );
+        $stmt->execute([$identifier, $identifier]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
@@ -21,7 +31,6 @@ class UserModel {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    /** Borra un usuario por ID (las reservas asociadas se eliminan en cascada) */
     public function delete($id){
         $stmt = $this->db->prepare('DELETE FROM usuarios WHERE id=?');
         return $stmt->execute([$id]);
