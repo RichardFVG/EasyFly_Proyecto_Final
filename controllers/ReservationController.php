@@ -9,8 +9,8 @@ class ReservationController {
     }
 
     /* ------------------------------------------------------------------
-     * PASO 1: el formulario de flights.php nos envía aquí (POST) para
-     *         validar, calcular precio y mostrar confirm_flight.php
+     * PASO 1: recibe POST desde flights.php → calcula precio y muestra
+     *         confirm_flight.php
      * ------------------------------------------------------------------ */
     public function summary(){
         Auth::start();
@@ -28,6 +28,22 @@ class ReservationController {
         $mascota     = $_POST['mascota']            ?? '';
         $paisDest    = $_POST['pais_destino']       ?? '';
         $aeropDest   = $_POST['aeropuerto_destino'] ?? '';
+        $fechaVueloR = $_POST['fecha_vuelo']        ?? '';
+
+        //  Validar fecha y hora de vuelo -------------------------------
+        try {
+            $dtVuelo = new DateTime($fechaVueloR ?: 'now');
+        } catch (Exception $e){
+            $_SESSION['flight_error'] = 'Fecha u hora de vuelo no válidas.';
+            header('Location: default.php?controller=flight&action=list');
+            exit;
+        }
+        if ($dtVuelo < new DateTime()){
+            $_SESSION['flight_error'] = 'La fecha del vuelo debe ser posterior a la actual.';
+            header('Location: default.php?controller=flight&action=list');
+            exit;
+        }
+        $fechaVuelo = $dtVuelo->format('Y-m-d H:i:s');
 
         //  Mapas base --------------------------------------------------
         $basePrices = [
@@ -35,6 +51,7 @@ class ReservationController {
           'Italia'=>45,'Japón'=>400,'México'=>230,'España'=>25,
           'Reino Unido'=>60,'Estados Unidos'=>190
         ];
+
         //  Validaciones -----------------------------------------------
         if (!isset($basePrices[$paisDest])){
             $_SESSION['flight_error'] = 'País de destino no válido.';
@@ -55,48 +72,40 @@ class ReservationController {
         }
 
         //  Cálculo de precio ------------------------------------------
-        $precioBase = $basePrices[$paisDest];   // precio “inicial” según el país
+        $precioBase = $basePrices[$paisDest];
         $precio     = $precioBase;
 
-        // –25 % si es menor de edad
-        if ($tipoPasaj === 'menor')   $precio *= 0.75; 
-
-        // +25 % si factura equipaje
-        if ($equipaje   === 'si')     $precio *= 1.25; 
-
-        // +200 % (total 300%) si elige Business
-        if ($clase      === 'business') $precio *= 3; 
-
-        /*  +80 % del precio INICIAL si lleva mascota.
-            Se suma sobre el precio que ya llevamos calculado, de modo que
-            “80 % del inicial” equivale a 0,80 × $precioBase                */
-        if ($mascota === 'si')        $precio += $precioBase * 0.80;
+        if ($tipoPasaj === 'menor')   $precio *= 0.75; // –25 %
+        if ($equipaje   === 'si')     $precio *= 1.25; // +25 %
+        if ($clase      === 'business') $precio *= 3;  // +200 %
+        if ($mascota === 'si')        $precio += $precioBase * 0.80; // +80 % base
 
         //  Detalle textual --------------------------------------------
         $detalle = [
-            'Origen'          => "$region – $aeropOrig",
-            'Tipo Pasajero'   => $tipoPasaj === 'menor' ? 'Menor de edad' : 'Mayor de edad',
-            'Equipaje'        => $equipaje === 'si'
-                                  ? 'Incluye maleta facturada' : 'Sin maleta facturada',
-            'Clase'           => $clase === 'business' ? 'Business' : 'Económica',
-            'Mascota'         => $mascota === 'si'
-                                  ? 'Incluye mascota en cabina' : 'Sin mascota',
-            'Destino'         => "$paisDest – $aeropDest"
+            'Origen'              => "$region – $aeropOrig",
+            'Tipo Pasajero'       => $tipoPasaj === 'menor' ? 'Menor de edad' : 'Mayor de edad',
+            'Equipaje'            => $equipaje === 'si'
+                                      ? 'Incluye maleta facturada' : 'Sin maleta facturada',
+            'Clase'               => $clase === 'business' ? 'Business' : 'Económica',
+            'Mascota'             => $mascota === 'si'
+                                      ? 'Incluye mascota en cabina' : 'Sin mascota',
+            'Destino'             => "$paisDest – $aeropDest",
+            'Fecha y hora del vuelo' => (new DateTime($fechaVuelo))->format('d/m/Y H:i')
         ];
 
         //  Guardamos en sesión para la vista de confirmación ----------
         $_SESSION['resumen_vuelo'] = [
-            'precio'  => $precio,
-            'detalle' => $detalle,
-            'pais'    => $paisDest            // para crear el registro después
+            'precio'      => $precio,
+            'detalle'     => $detalle,
+            'pais'        => $paisDest,
+            'fecha_vuelo' => $fechaVuelo
         ];
 
         require __DIR__ . '/../views/confirm_flight.php';
     }
 
     /* ------------------------------------------------------------------
-     * PASO 2: botón final “Reservar Vuelo” – se crea la reserva,
-     *         se manda email y se redirige al perfil.
+     * PASO 2: botón final “Reservar Vuelo”
      * ------------------------------------------------------------------ */
     public function reserveCustom(){
         Auth::start();
@@ -108,7 +117,7 @@ class ReservationController {
         $data   = $_SESSION['resumen_vuelo'];
         unset($_SESSION['resumen_vuelo']);
 
-        // ----- 1. buscar un vuelo disponible en la tabla 'vuelos' ----
+        // 1. buscar vuelo disponible ----------------------------------
         $stmt = $this->pdo->prepare(
             'SELECT * FROM vuelos WHERE pais_destino = ? AND plazas_disponibles > 0 LIMIT 1'
         );
@@ -120,12 +129,17 @@ class ReservationController {
             exit;
         }
 
-        // ----- 2. crear la reserva con los nuevos campos -------------
+        // 2. crear la reserva ----------------------------------------
         $rm = new ReservationModel($this->pdo);
-        $codigo = $rm->createDetailed(Auth::user()['id'], $vuelo['id'],
-                                      $data['detalle'], $data['precio']);
+        $codigo = $rm->createDetailed(
+            Auth::user()['id'],
+            $vuelo['id'],
+            $data['detalle'],
+            $data['precio'],
+            $data['fecha_vuelo']
+        );
 
-        // ----- 3. email de confirmación ------------------------------
+        // 3. email de confirmación -----------------------------------
         $detalleHtml = '';
         foreach ($data['detalle'] as $k => $v){
             $detalleHtml .= "<strong>$k:</strong> ".htmlspecialchars($v).'<br>';
@@ -135,7 +149,7 @@ class ReservationController {
 
         sendConfirmation(Auth::user()['email'], Auth::user()['nombre'], $detalleHtml);
 
-        // ----- 4. vista de ok ----------------------------------------
+        // 4. vista ok -----------------------------------------------
         require __DIR__ . '/../views/confirm.php';
     }
 
@@ -175,7 +189,7 @@ class ReservationController {
     }
 
     /* ------------------------------------------------------------------
-     * BORRAR una reserva (sin cambios)
+     * BORRAR una reserva – sin cambios
      * ------------------------------------------------------------------ */
     public function delete(){
         Auth::start();

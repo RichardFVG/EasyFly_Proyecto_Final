@@ -5,23 +5,15 @@
 include __DIR__.'/partials/header.php';
 Auth::start();
 if (!Auth::check()){
-    // Solo usuarios registrados pueden reservar.
     header('Location: default.php?controller=user&action=login');
     exit;
 }
 
-// ------  Precios base y aeropuertos disponibles  ----------------
+/* ---  Datos base (precios y aeropuertos)  --------------------- */
 $basePrices = [
-  'Argentina'      => 470,
-  'Brasil'         => 425,
-  'Francia'        =>  50,
-  'Alemania'       =>  60,
-  'Italia'         =>  45,
-  'Japón'          => 400,
-  'México'         => 230,
-  'España'         =>  25,
-  'Reino Unido'    =>  60,
-  'Estados Unidos' => 190
+  'Argentina'=>470,'Brasil'=>425,'Francia'=>50,'Alemania'=>60,
+  'Italia'=>45,'Japón'=>400,'México'=>230,'España'=>25,
+  'Reino Unido'=>60,'Estados Unidos'=>190
 ];
 
 $airports = [
@@ -158,25 +150,28 @@ unset($_SESSION['flight_error']);
       </option>
   </select>
 
-  <!-- 9.  Reservar ------------------------------------------------------->
+  <!-- 9. Fecha y hora del vuelo --------------------------------------->
+  <label class="form-label mt-3">Fecha y hora del vuelo</label>
+  <input type="datetime-local" name="fecha_vuelo"
+         class="form-control" required
+         min="<?= (new DateTime('+1 day'))->format('Y-m-d\TH:i') ?>">
+
+  <!-- 10.  Reservar ---------------------------------------------------->
   <button type="submit" class="btn btn-primary w-100 mt-3">
       Reservar Vuelo
   </button>
 </form>
 
 <script>
-/* --------------------------------------------------------------
-   JS rápido embebido para rellenar aeropuertos destino
--------------------------------------------------------------- */
 const airports = <?= json_encode($airports, JSON_UNESCAPED_UNICODE) ?>;
 function cargarAeropuertos(){
   const pais = document.getElementById('pais_destino').value;
   const sel  = document.getElementById('aeropuerto_destino');
   sel.innerHTML = '';
   (airports[pais] || []).forEach(ap => {
-      const opt      = document.createElement('option');
-      opt.value      = ap;
-      opt.textContent= ap;
+      const opt = document.createElement('option');
+      opt.value = ap;
+      opt.textContent = ap;
       sel.appendChild(opt);
   });
 }
