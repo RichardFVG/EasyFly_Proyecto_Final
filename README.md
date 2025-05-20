@@ -1,8 +1,3 @@
----
-title: README
-
----
-
 # Proyecto: EasyFly
 
 ---
@@ -22,17 +17,22 @@ EasyFly es una aplicación web MVC desarrollada en **PHP 8** que permite a cualq
 
 ## Tabla de contenidos
 
-1. [Demo rápida](#demo-rápida)
-2. [Motivación y objetivos](#motivación-y-objetivos)
-3. [Tecnologías](#tecnologías)
-4. [Requisitos previos](#requisitos-previos)
-5. [Instalación paso a paso](#instalación-paso-a-paso)
-6. [Configuración](#configuración)
-7. [Estructura del proyecto](#estructura-del-proyecto)
-8. [Flujo de la aplicación](#flujo-de-la-aplicación)
-9. [Seguridad](#seguridad)
-10. [Posibles mejoras](#posibles-mejoras)
-11. [Autor y licencia](#autor-y-licencia)
+- [Proyecto: EasyFly](#proyecto-easyfly)
+  - [Nombre: Richard Francisco Vaca Garcia](#nombre-richard-francisco-vaca-garcia)
+  - [Ciclo: 2do CFGS DAW](#ciclo-2do-cfgs-daw)
+  - [Asignatura: Proyecto de Desarrollo de Aplicaciones Web (PRW)](#asignatura-proyecto-de-desarrollo-de-aplicaciones-web-prw)
+  - [Tabla de contenidos](#tabla-de-contenidos)
+  - [Demo rápida](#demo-rápida)
+  - [Motivación y objetivos](#motivación-y-objetivos)
+  - [Tecnologías](#tecnologías)
+  - [Requisitos previos](#requisitos-previos)
+  - [Instalación paso a paso](#instalación-paso-a-paso)
+  - [Configuración](#configuración)
+  - [Estructura del proyecto](#estructura-del-proyecto)
+  - [Flujo de la aplicación](#flujo-de-la-aplicación)
+  - [Seguridad](#seguridad)
+  - [Posibles mejoras](#posibles-mejoras)
+  - [Autor y licencia](#autor-y-licencia)
 
 ---
 
