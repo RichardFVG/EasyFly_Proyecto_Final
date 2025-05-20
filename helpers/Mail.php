@@ -1,15 +1,20 @@
-
 <?php
 require_once __DIR__ . '/../config/config.php';
 
-function sendConfirmation($toEmail, $toName, $details){
-    $bodyHtml = '<h2>Confirmación de tu Reserva EasyFly</h2><p>'.htmlspecialchars($details).'</p>';
+function sendConfirmation($toEmail, $toName, $bodyHtml){
+    $fullHtml = '
+        <html><body style="font-family:Arial,sans-serif">
+        <h2 style="color:#0d6efd;margin-top:0">Confirmación de tu Reserva EasyFly</h2>'
+        .$bodyHtml.
+        '<p style="margin-top:2rem">¡Gracias por volar con EasyFly!</p></body></html>';
+
     $data = [
         'Messages' => [[
-            'From' => ['Email' => 'confirmacionreservavuelo@proyectofinaleasyfly.fun', 'Name' => 'EasyFly'],
-            'To' => [[ 'Email' => $toEmail, 'Name' => $toName ]],
+            'From' => ['Email' => 'confirmacionreservavuelo@proyectofinaleasyfly.fun',
+                       'Name' => 'EasyFly'],
+            'To'   => [[ 'Email' => $toEmail, 'Name' => $toName ]],
             'Subject' => 'Tu reserva en EasyFly',
-            'HTMLPart' => $bodyHtml
+            'HTMLPart' => $fullHtml
         ]]
     ];
     $ch = curl_init('https://api.mailjet.com/v3.1/send');

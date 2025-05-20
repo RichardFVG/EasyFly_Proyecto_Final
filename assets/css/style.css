@@ -64,3 +64,16 @@ body.bg-light {
         height: 40px;                /* un poco más pequeñas en móviles muy chicos  */
     }
 }
+
+/* ============  NUEVO: formulario de reserva  ============ */
+.form-reserva .form-select,
+.form-reserva .btn{
+    margin-bottom: .9rem;
+}
+
+@media (min-width: 768px){
+    .form-reserva{
+        max-width: 640px;
+        margin: 0 auto;              /* centrado suave en pantallas medias-grandes  */
+    }
+}
