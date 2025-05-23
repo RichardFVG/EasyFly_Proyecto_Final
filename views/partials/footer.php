@@ -2,7 +2,7 @@
 </div> <!-- container -->
 <hr>
 <footer class="footer">
-    <p>© EasyFly, Richard Francisco Vaca Garcia, 
+    <p>&nbsp;&nbsp;© EasyFly, Richard Francisco Vaca Garcia, 
     2do CFGS DAW</p>
 </footer>
 

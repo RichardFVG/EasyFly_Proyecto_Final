@@ -77,3 +77,31 @@ body.bg-light {
         margin: 0 auto;              /* centrado suave en pantallas medias-grandes  */
     }
 }
+
+/* =========================================================
+   NUEVO ▸ Campo de contraseña con icono mostrar/ocultar
+   ========================================================= */
+.password-wrapper{
+    position: relative;
+}
+.password-wrapper input.form-control{
+    padding-right: 46px;    /* deja espacio para el icono */
+}
+.password-wrapper .toggle-password{
+    position: absolute;
+    right: 12px;            /* separación del borde del input */
+    top: 0;
+    bottom: 0;
+    display: flex;          /* centra verticalmente el SVG    */
+    align-items: center;
+
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+
+    /* desactiva selección de texto/icono (primero prefijo) */
+    -webkit-user-select: none;  /* Safari / iOS */
+    user-select: none;          /* estándar */
+
+    stroke: #00c7be;
+}
