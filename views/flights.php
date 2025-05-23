@@ -83,6 +83,30 @@ $originAirports = [
   ]
 ];
 
+/* ----------  Recuperar datos previos (si hubo “< Atrás”) ------- */
+$prev = $_SESSION['prev_flight_form'] ?? [];
+
+$selRegion        = $prev['region_origen']      ?? '';
+$selOriginAirport = $prev['aeropuerto_origen']  ?? '';
+$selTipoPasajero  = $prev['tipo_pasajero']      ?? '';
+$selEquipaje      = $prev['equipaje']           ?? '';
+$selClase         = $prev['clase']              ?? '';
+$selMascota       = $prev['mascota']            ?? '';
+$selPaisDest      = $prev['pais_destino']       ?? '';
+$selDestAirport   = $prev['aeropuerto_destino'] ?? '';
+$selFechaVuelo    = $prev['fecha_vuelo']        ?? '';
+
+/* Fecha → formato input datetime-local (Y-m-dTH:i) */
+$fechaInputValue = '';
+if ($selFechaVuelo){
+    try{
+        $dtTmp = new DateTime($selFechaVuelo, new DateTimeZone('Atlantic/Canary'));
+        $fechaInputValue = $dtTmp->format('Y-m-d\TH:i');
+    } catch(Exception $e){
+        $fechaInputValue = '';
+    }
+}
+
 $error = $_SESSION['flight_error'] ?? null;
 unset($_SESSION['flight_error']);
 ?>
@@ -99,43 +123,82 @@ unset($_SESSION['flight_error']);
   <label class="form-label">Lugar de partida: España</label>
   <select name="region_origen" id="region_origen"
           class="form-select" required>
-      <option value="Islas Canarias">Islas Canarias</option>
-      <option value="Península">Península (para Japón)</option>
+      <option value="Islas Canarias"
+              <?= $selRegion==='Islas Canarias' ? 'selected' : '' ?>>
+          Islas Canarias
+      </option>
+      <option value="Península"
+              <?= $selRegion==='Península' ? 'selected' : '' ?>>
+          Península (para Japón)
+      </option>
   </select>
 
-  <!-- 2. Aeropuerto de origen (depende de la región) -------------------->
+  <!-- 2. Aeropuerto de origen (se actualiza según región) --------------->
   <label class="form-label">Aeropuerto de origen</label>
   <select name="aeropuerto_origen" id="aeropuerto_origen"
           class="form-select" required>
-      <!-- Se rellena por JavaScript -->
+      <?php if ($selRegion && isset($originAirports[$selRegion])): ?>
+          <?php foreach ($originAirports[$selRegion] as $ap): ?>
+              <option value="<?= htmlspecialchars($ap) ?>"
+                      <?= $ap === $selOriginAirport ? 'selected' : '' ?>>
+                  <?= htmlspecialchars($ap) ?>
+              </option>
+          <?php endforeach; ?>
+      <?php else: ?>
+          <!-- Se rellenará con JavaScript -->
+      <?php endif; ?>
   </select>
 
   <!-- 3. Tipo de pasajero --------------------------------------------->
   <label class="form-label">Tipo de pasajero</label>
   <select name="tipo_pasajero" class="form-select" required>
-      <option value="adulto">Mayor de edad</option>
-      <option value="menor">Menor de edad (-25 %)</option>
+      <option value="adulto"
+              <?= $selTipoPasajero==='adulto' || $selTipoPasajero==='' ? 'selected' : '' ?>>
+          Mayor de edad
+      </option>
+      <option value="menor"
+              <?= $selTipoPasajero==='menor' ? 'selected' : '' ?>>
+          Menor de edad (-25 %)
+      </option>
   </select>
 
   <!-- 4. Equipaje facturado ------------------------------------------->
   <label class="form-label">Equipaje facturado</label>
   <select name="equipaje" class="form-select" required>
-      <option value="si">Incluir una maleta facturada de 23 kg (+25 %)</option>
-      <option value="no">NO incluir una maleta facturada de 23 kg</option>
+      <option value="si"
+              <?= $selEquipaje==='si' ? 'selected' : '' ?>>
+          Incluir una maleta facturada de 23 kg (+25 %)
+      </option>
+      <option value="no"
+              <?= $selEquipaje==='no' || $selEquipaje==='' ? 'selected' : '' ?>>
+          NO incluir una maleta facturada de 23 kg
+      </option>
   </select>
 
   <!-- 5. Clase -------------------------------------------------------->
   <label class="form-label">Clase</label>
   <select name="clase" class="form-select" required>
-      <option value="economica">Clase Económica</option>
-      <option value="business">Clase Business (+200 %)</option>
+      <option value="economica"
+              <?= $selClase==='economica' || $selClase==='' ? 'selected' : '' ?>>
+          Clase Económica
+      </option>
+      <option value="business"
+              <?= $selClase==='business' ? 'selected' : '' ?>>
+          Clase Business (+200 %)
+      </option>
   </select>
 
   <!-- 6. Mascota ------------------------------------------------------->
   <label class="form-label">Mascota en cabina</label>
   <select name="mascota" class="form-select" required>
-      <option value="no">NO incluir una mascota pequeña en cabina</option>
-      <option value="si">Incluir una mascota pequeña en cabina (+80 %)</option>
+      <option value="no"
+              <?= $selMascota==='no' || $selMascota==='' ? 'selected' : '' ?>>
+          NO incluir una mascota pequeña en cabina
+      </option>
+      <option value="si"
+              <?= $selMascota==='si' ? 'selected' : '' ?>>
+          Incluir una mascota pequeña en cabina (+80 %)
+      </option>
   </select>
 
   <button type="button" class="btn btn-outline-success w-100"
@@ -143,29 +206,45 @@ unset($_SESSION['flight_error']);
       Añadir información de la mascota
   </button>
 
-  <!-- 7. País de destino ---------------------------------------------->
+  <!-- 7. País de destino ----------------------------------------------->
   <label class="form-label mt-3">País de destino</label>
   <select name="pais_destino" id="pais_destino" class="form-select" required
           onchange="cargarAeropuertos()">
-      <option value="" selected disabled>— Selecciona un país —</option>
+      <option value="" <?= $selPaisDest==='' ? 'selected' : '' ?> disabled>
+          — Selecciona un país —
+      </option>
       <?php foreach ($basePrices as $pais => $price): ?>
-        <option value="<?= $pais ?>"><?= $pais ?> (desde €<?= $price ?>)</option>
+        <option value="<?= $pais ?>"
+                <?= $pais === $selPaisDest ? 'selected' : '' ?>>
+            <?= $pais ?> (desde €<?= $price ?>)
+        </option>
       <?php endforeach; ?>
   </select>
 
-  <!-- 8. Aeropuerto de destino (rellenado vía JS) ---------------------->
+  <!-- 8. Aeropuerto de destino (se actualiza con JS) ------------------->
   <label class="form-label mt-2">Aeropuerto de destino</label>
   <select name="aeropuerto_destino" id="aeropuerto_destino"
           class="form-select" required>
-      <option value="" selected disabled>
-          — Selecciona primero el país —
-      </option>
+      <?php if ($selPaisDest && isset($airports[$selPaisDest])): ?>
+          <?php foreach ($airports[$selPaisDest] as $ap): ?>
+              <option value="<?= htmlspecialchars($ap) ?>"
+                      <?= $ap === $selDestAirport ? 'selected' : '' ?>>
+                  <?= htmlspecialchars($ap) ?>
+              </option>
+          <?php endforeach; ?>
+      <?php else: ?>
+          <option value="" selected disabled>
+              — Selecciona primero el país —
+          </option>
+      <?php endif; ?>
   </select>
 
   <!-- 9. Fecha y hora del vuelo --------------------------------------->
   <label class="form-label mt-3">Fecha y hora del vuelo</label>
   <input type="datetime-local" name="fecha_vuelo"
-         class="form-control" required>
+         class="form-control"
+         value="<?= htmlspecialchars($fechaInputValue) ?>"
+         required>
 
   <!-- 10.  Reservar ---------------------------------------------------->
   <button type="submit" class="btn btn-primary w-100 mt-3">
@@ -179,6 +258,10 @@ const airports        = <?= json_encode($airports, JSON_UNESCAPED_UNICODE) ?>;
 /* ----------  NUEVO ▸ Orígenes por región --------------------------- */
 const originAirports  = <?= json_encode($originAirports, JSON_UNESCAPED_UNICODE) ?>;
 
+/* ----------  Datos preseleccionados (PHP → JS) --------------------- */
+let preselectedOrigin = <?= json_encode($selOriginAirport, JSON_UNESCAPED_UNICODE) ?>;
+let preselectedDest   = <?= json_encode($selDestAirport,   JSON_UNESCAPED_UNICODE) ?>;
+
 /* ---------  Actualiza “Aeropuerto de destino” ---------------------- */
 function cargarAeropuertos(){
   const pais = document.getElementById('pais_destino').value;
@@ -190,9 +273,12 @@ function cargarAeropuertos(){
       opt.textContent = ap;
       sel.appendChild(opt);
   });
+  if (preselectedDest){
+      sel.value = preselectedDest;
+  }
 }
 
-/* ---------  NUEVO ▸ Actualiza “Aeropuerto de origen” --------------- */
+/* ---------  Actualiza “Aeropuerto de origen” ----------------------- */
 function cargarAeropuertosOrigen(){
   const region = document.getElementById('region_origen').value;
   const sel    = document.getElementById('aeropuerto_origen');
@@ -203,14 +289,33 @@ function cargarAeropuertosOrigen(){
       opt.textContent = ap;
       sel.appendChild(opt);
   });
+  if (preselectedOrigin){
+      sel.value = preselectedOrigin;
+  }
 }
 
 /*  Eventos ---------------------------------------------------------- */
 document.getElementById('region_origen')
-        .addEventListener('change', cargarAeropuertosOrigen);
+        .addEventListener('change', () => {
+            preselectedOrigin = '';      // si cambia región limpiamos selección previa
+            cargarAeropuertosOrigen();
+        });
+
+document.getElementById('pais_destino')
+        .addEventListener('change', () => {
+            preselectedDest = '';        // si cambia país limpiamos selección previa
+            cargarAeropuertos();
+        });
 
 /*  Primera carga al abrir la página --------------------------------- */
-document.addEventListener('DOMContentLoaded', cargarAeropuertosOrigen);
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('region_origen').value){
+        cargarAeropuertosOrigen();
+    }
+    if (document.getElementById('pais_destino').value){
+        cargarAeropuertos();
+    }
+});
 </script>
 
 <?php include __DIR__.'/partials/footer.php'; ?>

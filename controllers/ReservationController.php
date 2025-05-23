@@ -116,6 +116,19 @@ class ReservationController {
             'duracion'    => $duracion
         ];
 
+        /* ----------  NUEVO ▸ Guardar el formulario para “< Atrás” ----- */
+        $_SESSION['prev_flight_form'] = [
+            'region_origen'      => $region,
+            'aeropuerto_origen'  => $aeropOrig,
+            'tipo_pasajero'      => $tipoPasaj,
+            'equipaje'           => $equipaje,
+            'clase'              => $clase,
+            'mascota'            => $mascota,
+            'pais_destino'       => $paisDest,
+            'aeropuerto_destino' => $aeropDest,
+            'fecha_vuelo'        => $fechaVuelo
+        ];
+
         require __DIR__.'/../views/confirm_flight.php';
     }
 
@@ -177,13 +190,15 @@ class ReservationController {
 
         sendConfirmation(Auth::user()['email'], Auth::user()['nombre'], $detalleHtml);
 
-        /* 4. Vista OK ------------------------------------------------- */
+        /* 4. Limpiar datos temporales de formulario ------------------- */
+        unset($_SESSION['prev_flight_form']);
+
+        /* 5. Vista OK ------------------------------------------------- */
         require __DIR__.'/../views/confirm.php';
     }
 
     /* ------------------------------------------------------------------
-     *  ACCIÓN ORIGINAL (reserva rápida con el botón antiguo) – sigue
-     *  disponible para compatibilidad pero ya no se usa.
+     *  ACCIÓN ORIGINAL (reserva rápida con el botón antiguo)
      * ------------------------------------------------------------------ */
     public function reserve(){
         Auth::start();
