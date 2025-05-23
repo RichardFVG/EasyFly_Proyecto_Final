@@ -58,6 +58,14 @@ $weather = getWeatherData();
     <!-- Opciones de usuario -------------------------------------------------->
     <div class="collapse navbar-collapse" id="navMenu">
       <ul class="navbar-nav ms-auto text-center">
+
+        <!-- NUEVO ▸ Sobre Nosotros (visible siempre) -->
+        <li class="nav-item">
+          <a class="nav-link" href="default.php?controller=home&action=about">
+            Sobre&nbsp;Nosotros
+          </a>
+        </li>
+
         <?php if (Auth::check()): ?>
           <li class="nav-item">
             <a class="nav-link" href="default.php?controller=user&action=profile">Perfil</a>
