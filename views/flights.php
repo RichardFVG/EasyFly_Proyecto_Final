@@ -29,7 +29,7 @@ $airports = [
   ],
   'Francia'        => [
       'Charles de Gaulle Airport',
-      'Nice Côte d\'Azur Airport',
+      'Nice Côte d’Azur Airport',
       'Lyon-Saint Exupéry Airport'
   ],
   'Alemania'       => [
@@ -66,7 +66,7 @@ $airports = [
   'Estados Unidos' => [
       'John F. Kennedy International Airport',
       'Los Angeles International Airport',
-      'O\'Hare International Airport'
+      'O’Hare International Airport'
   ]
 ];
 
@@ -102,13 +102,13 @@ unset($_SESSION['flight_error']);
   <label class="form-label">Tipo de pasajero</label>
   <select name="tipo_pasajero" class="form-select" required>
       <option value="adulto">Mayor de edad</option>
-      <option value="menor">Menor de edad (-25%)</option>
+      <option value="menor">Menor de edad (-25 %)</option>
   </select>
 
   <!-- 4. Equipaje facturado -------------------------------------------->
   <label class="form-label">Equipaje facturado</label>
   <select name="equipaje" class="form-select" required>
-      <option value="si">Incluir una maleta facturada de 23 kg (+25%)</option>
+      <option value="si">Incluir una maleta facturada de 23 kg (+25 %)</option>
       <option value="no">NO incluir una maleta facturada de 23 kg</option>
   </select>
 
@@ -116,7 +116,7 @@ unset($_SESSION['flight_error']);
   <label class="form-label">Clase</label>
   <select name="clase" class="form-select" required>
       <option value="economica">Clase Económica</option>
-      <option value="business">Clase Business (+200%)</option>
+      <option value="business">Clase Business (+200 %)</option>
   </select>
 
   <!-- 6. Mascota ------------------------------------------------------->
@@ -152,9 +152,9 @@ unset($_SESSION['flight_error']);
 
   <!-- 9. Fecha y hora del vuelo --------------------------------------->
   <label class="form-label mt-3">Fecha y hora del vuelo</label>
+  <!--  Se eliminó el atributo min para permitir reservar el mismo día -->
   <input type="datetime-local" name="fecha_vuelo"
-         class="form-control" required
-         min="<?= (new DateTime('+1 day'))->format('Y-m-d\TH:i') ?>">
+         class="form-control" required>
 
   <!-- 10.  Reservar ---------------------------------------------------->
   <button type="submit" class="btn btn-primary w-100 mt-3">

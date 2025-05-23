@@ -31,15 +31,24 @@ class ReservationController {
         $fechaVueloR = $_POST['fecha_vuelo']        ?? '';
 
         //  Validar fecha y hora de vuelo -------------------------------
+        $tzCanary = new DateTimeZone('Atlantic/Canary');
+
         try {
-            $dtVuelo = new DateTime($fechaVueloR ?: 'now');
+            /* El valor del <input type="datetime-local"> llega sin zona
+               ⇒ lo interpretamos explícitamente como hora local (Canarias) */
+            $dtVuelo = new DateTime($fechaVueloR ?: 'now', $tzCanary);
         } catch (Exception $e){
             $_SESSION['flight_error'] = 'Fecha u hora de vuelo no válidas.';
             header('Location: default.php?controller=flight&action=list');
             exit;
         }
-        if ($dtVuelo < new DateTime()){
-            $_SESSION['flight_error'] = 'La fecha del vuelo debe ser posterior a la actual.';
+
+        /* Debe estar, como mínimo, 5 min por delante del “ahora” */
+        $ahora = new DateTime('now', $tzCanary);
+        $diffSeg = $dtVuelo->getTimestamp() - $ahora->getTimestamp();   // positivo ⇒ futuro
+        if ($diffSeg < 300){                                            // 300 s = 5 min
+            $_SESSION['flight_error'] =
+                'La fecha del vuelo debe ser, como mínimo, 5 minutos posterior a la actual.';
             header('Location: default.php?controller=flight&action=list');
             exit;
         }
