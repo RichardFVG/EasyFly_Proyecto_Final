@@ -16,6 +16,7 @@ $basePrices = [
   'Reino Unido'=>60,'Estados Unidos'=>190
 ];
 
+/* ---  Aeropuertos de DESTINO (sin cambios) -------------------- */
 $airports = [
   'Argentina'      => [
       'Ministro Pistarini International Airport',
@@ -70,6 +71,18 @@ $airports = [
   ]
 ];
 
+/* ---  NUEVO  ▸  Aeropuertos de ORIGEN por región  -------------- */
+$originAirports = [
+  'Islas Canarias' => [
+      'Gran Canaria Airport (Las Palmas)',
+      'Tenerife North Airport (Los Rodeos Airport)'
+  ],
+  'Península'      => [
+      'Madrid–Barajas Airport',
+      'Barcelona–El Prat Airport'
+  ]
+];
+
 $error = $_SESSION['flight_error'] ?? null;
 unset($_SESSION['flight_error']);
 ?>
@@ -84,35 +97,34 @@ unset($_SESSION['flight_error']);
 
   <!-- 1. Lugar de partida (España) + región ----------------------------->
   <label class="form-label">Lugar de partida: España</label>
-  <select name="region_origen" class="form-select" required>
+  <select name="region_origen" id="region_origen"
+          class="form-select" required>
       <option value="Islas Canarias">Islas Canarias</option>
       <option value="Península">Península (para Japón)</option>
   </select>
 
-  <!-- 2. Aeropuerto de origen ------------------------------------------->
+  <!-- 2. Aeropuerto de origen (depende de la región) -------------------->
   <label class="form-label">Aeropuerto de origen</label>
-  <select name="aeropuerto_origen" class="form-select" required>
-      <option value="Gran Canaria Airport (Las Palmas)">Gran Canaria Airport (Las Palmas)</option>
-      <option value="Tenerife North Airport (Los Rodeos Airport)">Tenerife North Airport (Los Rodeos Airport)</option>
-      <option value="Madrid–Barajas Airport">Madrid–Barajas Airport</option>
-      <option value="Barcelona–El Prat Airport">Barcelona–El Prat Airport</option>
+  <select name="aeropuerto_origen" id="aeropuerto_origen"
+          class="form-select" required>
+      <!-- Se rellena por JavaScript -->
   </select>
 
-  <!-- 3. Tipo de pasajero ---------------------------------------------->
+  <!-- 3. Tipo de pasajero --------------------------------------------->
   <label class="form-label">Tipo de pasajero</label>
   <select name="tipo_pasajero" class="form-select" required>
       <option value="adulto">Mayor de edad</option>
       <option value="menor">Menor de edad (-25 %)</option>
   </select>
 
-  <!-- 4. Equipaje facturado -------------------------------------------->
+  <!-- 4. Equipaje facturado ------------------------------------------->
   <label class="form-label">Equipaje facturado</label>
   <select name="equipaje" class="form-select" required>
       <option value="si">Incluir una maleta facturada de 23 kg (+25 %)</option>
       <option value="no">NO incluir una maleta facturada de 23 kg</option>
   </select>
 
-  <!-- 5. Clase --------------------------------------------------------->
+  <!-- 5. Clase -------------------------------------------------------->
   <label class="form-label">Clase</label>
   <select name="clase" class="form-select" required>
       <option value="economica">Clase Económica</option>
@@ -131,7 +143,7 @@ unset($_SESSION['flight_error']);
       Añadir información de la mascota
   </button>
 
-  <!-- 7. País de destino ----------------------------------------------->
+  <!-- 7. País de destino ---------------------------------------------->
   <label class="form-label mt-3">País de destino</label>
   <select name="pais_destino" id="pais_destino" class="form-select" required
           onchange="cargarAeropuertos()">
@@ -141,7 +153,7 @@ unset($_SESSION['flight_error']);
       <?php endforeach; ?>
   </select>
 
-  <!-- 8. Aeropuerto de destino (rellenado vía JS) ----------------------->
+  <!-- 8. Aeropuerto de destino (rellenado vía JS) ---------------------->
   <label class="form-label mt-2">Aeropuerto de destino</label>
   <select name="aeropuerto_destino" id="aeropuerto_destino"
           class="form-select" required>
@@ -152,7 +164,6 @@ unset($_SESSION['flight_error']);
 
   <!-- 9. Fecha y hora del vuelo --------------------------------------->
   <label class="form-label mt-3">Fecha y hora del vuelo</label>
-  <!--  Se eliminó el atributo min para permitir reservar el mismo día -->
   <input type="datetime-local" name="fecha_vuelo"
          class="form-control" required>
 
@@ -163,7 +174,12 @@ unset($_SESSION['flight_error']);
 </form>
 
 <script>
-const airports = <?= json_encode($airports, JSON_UNESCAPED_UNICODE) ?>;
+/* ----------  Destinos (ya existente)  ------------------------------ */
+const airports        = <?= json_encode($airports, JSON_UNESCAPED_UNICODE) ?>;
+/* ----------  NUEVO ▸ Orígenes por región --------------------------- */
+const originAirports  = <?= json_encode($originAirports, JSON_UNESCAPED_UNICODE) ?>;
+
+/* ---------  Actualiza “Aeropuerto de destino” ---------------------- */
 function cargarAeropuertos(){
   const pais = document.getElementById('pais_destino').value;
   const sel  = document.getElementById('aeropuerto_destino');
@@ -175,6 +191,26 @@ function cargarAeropuertos(){
       sel.appendChild(opt);
   });
 }
+
+/* ---------  NUEVO ▸ Actualiza “Aeropuerto de origen” --------------- */
+function cargarAeropuertosOrigen(){
+  const region = document.getElementById('region_origen').value;
+  const sel    = document.getElementById('aeropuerto_origen');
+  sel.innerHTML = '';
+  (originAirports[region] || []).forEach(ap => {
+      const opt = document.createElement('option');
+      opt.value = ap;
+      opt.textContent = ap;
+      sel.appendChild(opt);
+  });
+}
+
+/*  Eventos ---------------------------------------------------------- */
+document.getElementById('region_origen')
+        .addEventListener('change', cargarAeropuertosOrigen);
+
+/*  Primera carga al abrir la página --------------------------------- */
+document.addEventListener('DOMContentLoaded', cargarAeropuertosOrigen);
 </script>
 
 <?php include __DIR__.'/partials/footer.php'; ?>

@@ -35,5 +35,19 @@ class UserModel {
         $stmt = $this->db->prepare('DELETE FROM usuarios WHERE id=?');
         return $stmt->execute([$id]);
     }
+
+    /* ================================================================
+     *  NUEVOS MÉTODOS DE ACTUALIZACIÓN
+     * ================================================================ */
+
+    public function updateName($id, $name){
+        $stmt = $this->db->prepare('UPDATE usuarios SET nombre = ? WHERE id = ?');
+        return $stmt->execute([$name, $id]);
+    }
+
+    public function updateEmail($id, $email){
+        $stmt = $this->db->prepare('UPDATE usuarios SET email = ? WHERE id = ?');
+        return $stmt->execute([$email, $id]);
+    }
 }
 ?>

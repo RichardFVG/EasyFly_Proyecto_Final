@@ -40,8 +40,8 @@ EasyFly es una aplicación web MVC desarrollada en **PHP 8** que permite a cualq
 
 | Rol               | Credenciales                       | Qué probar                                        |
 | ----------------- | ---------------------------------- | ------------------------------------------------- |
-| **Administrador** | `richi3fvg@gmail.com` o Richard / `admin123` | Acceso al panel **Admin** → cancelar reservas     |
-| **Usuario**       | `the4lpha0ne@gmail.com` o Administrador / `1234`   | Reservar un vuelo y ver la confirmación por email |
+| **Administrador** | `the4lpha0ne@gmail.com` o Richard / `1234` | Acceso al panel **Admin** → cancelar reservas     |
+| **Usuario**       | `richi3fvg@gmail.com` o Administrador / `admin123`   | Reservar un vuelo y ver la confirmación por email |
 
 > **Nota:** Los datos de autenticación están precargados en *database.sql*. Todas las contraseñas están hasheadas con **bcrypt**.
 

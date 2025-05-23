@@ -82,5 +82,93 @@ class UserController {
         header('Location: default.php');
         exit;
     }
+
+    /* ================================================================
+     *  NUEVOS MÉTODOS: actualización segura de nombre y email
+     * ================================================================ */
+
+    /** POST: new_name + password */
+    public function updateName(){
+        Auth::start();
+        if (!Auth::check()){
+            header('Location: default.php');
+            exit;
+        }
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST'){
+            header('Location: default.php?controller=user&action=profile');
+            exit;
+        }
+
+        $newName  = trim($_POST['new_name'] ?? '');
+        $password = $_POST['password'] ?? '';
+
+        if ($newName === ''){
+            $_SESSION['profile_error'] = 'El nombre no puede estar vacío.';
+            header('Location: default.php?controller=user&action=profile');
+            exit;
+        }
+
+        $user = $this->model->find(Auth::user()['id']);
+        if (!password_verify($password, $user['password'])){
+            $_SESSION['profile_error'] = 'Contraseña incorrecta.';
+            header('Location: default.php?controller=user&action=profile');
+            exit;
+        }
+
+        $ok = $this->model->updateName($user['id'], $newName);
+        if ($ok){
+            $_SESSION['user']['nombre'] = $newName;           // refrescar sesión
+            $_SESSION['profile_success'] = 'Nombre actualizado correctamente.';
+        } else {
+            $_SESSION['profile_error'] = 'No se pudo actualizar el nombre.';
+        }
+        header('Location: default.php?controller=user&action=profile');
+    }
+
+    /** POST: new_email + password */
+    public function updateEmail(){
+        Auth::start();
+        if (!Auth::check()){
+            header('Location: default.php');
+            exit;
+        }
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST'){
+            header('Location: default.php?controller=user&action=profile');
+            exit;
+        }
+
+        $newEmail = trim($_POST['new_email'] ?? '');
+        $password = $_POST['password'] ?? '';
+
+        if ($newEmail === '' || !filter_var($newEmail, FILTER_VALIDATE_EMAIL)){
+            $_SESSION['profile_error'] = 'Email no válido.';
+            header('Location: default.php?controller=user&action=profile');
+            exit;
+        }
+
+        $user = $this->model->find(Auth::user()['id']);
+        if (!password_verify($password, $user['password'])){
+            $_SESSION['profile_error'] = 'Contraseña incorrecta.';
+            header('Location: default.php?controller=user&action=profile');
+            exit;
+        }
+
+        // Evitar duplicados
+        $exists = $this->model->findByEmail($newEmail);
+        if ($exists && $exists['id'] !== $user['id']){
+            $_SESSION['profile_error'] = 'Ese email ya está en uso.';
+            header('Location: default.php?controller=user&action=profile');
+            exit;
+        }
+
+        $ok = $this->model->updateEmail($user['id'], $newEmail);
+        if ($ok){
+            $_SESSION['user']['email'] = $newEmail;           // refrescar sesión
+            $_SESSION['profile_success'] = 'Email actualizado correctamente.';
+        } else {
+            $_SESSION['profile_error'] = 'No se pudo actualizar el email.';
+        }
+        header('Location: default.php?controller=user&action=profile');
+    }
 }
 ?>
