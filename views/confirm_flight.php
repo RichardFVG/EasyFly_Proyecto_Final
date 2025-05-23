@@ -65,7 +65,7 @@ unset($_SESSION['bank_error']);
     </button>
 </form>
 
-<!-- NUEVO ▸ Botón «Atrás» -->
+<!-- Botón «Atrás» -->
 <div class="d-flex justify-content-start mt-3">
   <a href="default.php?controller=flight&action=list"
      class="btn btn-outline-secondary">

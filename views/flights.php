@@ -16,7 +16,7 @@ $basePrices = [
   'Reino Unido'=>60,'Estados Unidos'=>190
 ];
 
-/* ---  Aeropuertos de DESTINO (sin cambios) -------------------- */
+/* ---  Aeropuertos de DESTINO -------------------- */
 $airports = [
   'Argentina'      => [
       'Ministro Pistarini International Airport',
@@ -71,7 +71,7 @@ $airports = [
   ]
 ];
 
-/* ---  NUEVO  ▸  Aeropuertos de ORIGEN por región  -------------- */
+/* ---  Aeropuertos de ORIGEN por región  -------------- */
 $originAirports = [
   'Islas Canarias' => [
       'Gran Canaria Airport (Las Palmas)',
@@ -111,7 +111,7 @@ $error = $_SESSION['flight_error'] ?? null;
 unset($_SESSION['flight_error']);
 ?>
 <!-- ===========================================================
-     WRAPPER NUEVO: anchura máxima más amplia en escritorio
+     WRAPPER con anchura máxima más amplia en escritorio
      y un poco de padding horizontal extra para legibilidad
      =========================================================== -->
 <div class="container-xl px-lg-5">  <!--  MOD  -->
@@ -261,7 +261,7 @@ unset($_SESSION['flight_error']);
 <script>
 /* ----------  Destinos (ya existente)  ------------------------------ */
 const airports        = <?= json_encode($airports, JSON_UNESCAPED_UNICODE) ?>;
-/* ----------  NUEVO ▸ Orígenes por región --------------------------- */
+/* ----------  Orígenes por región --------------------------- */
 const originAirports  = <?= json_encode($originAirports, JSON_UNESCAPED_UNICODE) ?>;
 
 /* ----------  Datos preseleccionados (PHP → JS) --------------------- */

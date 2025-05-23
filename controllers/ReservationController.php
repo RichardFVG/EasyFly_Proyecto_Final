@@ -116,7 +116,7 @@ class ReservationController {
             'duracion'    => $duracion
         ];
 
-        /* ----------  NUEVO ▸ Guardar el formulario para “< Atrás” ----- */
+        /* ----------  Guardar el formulario para “< Atrás” ----- */
         $_SESSION['prev_flight_form'] = [
             'region_origen'      => $region,
             'aeropuerto_origen'  => $aeropOrig,
@@ -232,7 +232,7 @@ class ReservationController {
     }
 
     /* ------------------------------------------------------------------
-     * BORRAR una reserva – sin cambios
+     * BORRAR una reserva
      * ------------------------------------------------------------------ */
     public function delete(){
         Auth::start();

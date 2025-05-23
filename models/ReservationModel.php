@@ -7,7 +7,7 @@ class ReservationModel {
         return strtoupper($pref).substr(bin2hex(random_bytes(3)),0,6);
     }
 
-    /*  -----  NUEVO: creación detallada con fecha_vuelo  -------------- */
+    /*  -----  creación detallada con fecha_vuelo  -------------- */
     public function createDetailed($userId, $flightId,
                                    array $detalle, $precio, $fechaVuelo){
         $this->db->beginTransaction();
@@ -42,9 +42,8 @@ class ReservationModel {
         return $code;
     }
 
-    /*  -----  MÉTODOS EXISTENTES (sin cambios)  ----------------------- */
+    /*  -----  MÉTODOS EXISTENTES  ----------------------- */
     public function create($userId,$flight){
-        // … flujo antiguo …
         $this->db->beginTransaction();
         $ok = (new FlightModel($this->db))->decrementSeat($flight['id']);
         if(!$ok){

@@ -18,51 +18,51 @@ body{
 }
 
 /* --------------------------------------------------------------
-   SISTEMA TIPOGRÁFICO RESPONSIVE
+   RESPONSIVE parte 1
    -------------------------------------------------------------- */
-html{ font-size:18px; }                     /* MOD: base móviles */
-@media (min-width:1200px){ html{ font-size:19px; } }  /* MOD: desktop +1 px */
-@media (max-width:414px){  html{ font-size:20px; } }  /* MOD: XS-S +2 px */
-/* FIX 23-may-2025 → evitar que teléfonos muy estrechos (< 360 px) agranden demasiado */
+html{ font-size:18px; }                     /* base móviles */
+@media (min-width:1200px){ html{ font-size:19px; } }  /* desktop +1 px */
+@media (max-width:414px){  html{ font-size:20px; } }  /* XS-S +2 px */
+/* evita que teléfonos muy estrechos (< 360 px) agranden demasiado */
 @media (max-width:359.98px){ html{ font-size:17px; } }
 
 /* =================================================================
    AJUSTES EXTRA para móviles muy pequeños (≤ 414 px)
    ================================================================= */
 @media (max-width:414px){
-    body .container{ padding-left:1.15rem; padding-right:1.15rem; } /* MOD */
+    body .container{ padding-left:1.15rem; padding-right:1.15rem; } 
 
     .btn,.btn-sm,
-    .form-control,.form-select{
-        padding:1.05rem 1.6rem;      /* MOD */
-        font-size:1.1rem;            /* MOD */
+    .form-control,.form-select{ 
+        padding:1.05rem 1.6rem; 
+        font-size:1.1rem; 
     }
 
-    table{ font-size:1.05rem; }      /* MOD */
+    table{ font-size:1.05rem; } 
 
-    h1,.display-5{ font-size:2.6rem; }  /* MOD */
-    h2{ font-size:2.25rem; }            /* MOD */
-    h3{ font-size:1.85rem; }            /* MOD */
+    h1,.display-5{ font-size:2.6rem; } 
+    h2{ font-size:2.25rem; } 
+    h3{ font-size:1.85rem; } 
 
-    .navbar-brand .logo-img{ height:60px; }  /* MOD */
-    .destinations .dest-img{ height:76px; }  /* MOD */
+    .navbar-brand .logo-img{ height:60px; } 
+    .destinations .dest-img{ height:76px; } 
 }
 
 /* ----------  Menú hamburguesa (≤ 991 px)  ----------------------- */
 @media (max-width:991.98px){
     .navbar-collapse{
         background-color:#0d6efd;
-        padding:1.15rem;       /* MOD */
+        padding:1.15rem; 
     }
     .navbar-collapse .nav-link{
         color:#ffffff !important;
         font-weight:500;
-        margin:.5rem 0;        /* MOD */
-        font-size:1.25rem;     /* MOD */
+        margin:.5rem 0; 
+        font-size:1.25rem; 
     }
 }
 
-/* FIX 23-may-2025 → hacer fluido el contenedor del navbar en <= 575 px */
+/* hace fluido el contenedor del navbar en <= 575 px */
 @media (max-width:575.98px){
     .navbar .container{
         max-width:100% !important;
@@ -73,14 +73,14 @@ html{ font-size:18px; }                     /* MOD: base móviles */
 
 /* ----------  Logo barra de navegación  -------------------------- */
 .navbar-brand .logo-img{
-    height:72px;               /* MOD: antes 64 px */
+    height:72px; 
     width:auto;
     margin-right:.6rem;
 }
 
 /* ----------  Enlaces de navegación (vista no colapsada) --------- */
 .navbar-nav .nav-link{
-    font-size:1.25rem;         /* MOD: +0.1 rem */
+    font-size:1.25rem; 
     font-weight:500;
 }
 
@@ -88,7 +88,7 @@ html{ font-size:18px; }                     /* MOD: base móviles */
 .user-name{
     color:#ffffff;
     font-weight:500;
-    font-size:1.25rem;         /* MOD: +0.1 rem */
+    font-size:1.25rem; 
     line-height:1;
 }
 @media (max-width:575.98px){ .user-name{ display:none !important; } }
@@ -98,11 +98,11 @@ html{ font-size:18px; }                     /* MOD: base móviles */
     display:flex;
     flex-wrap:wrap;
     justify-content:center;
-    gap:1.45rem;               /* MOD */
-    margin-top:2.2rem;         /* MOD */
+    gap:1.45rem; 
+    margin-top:2.2rem; 
 }
 .destinations .dest-img{
-    height:80px;               /* MOD: antes 72px */
+    height:80px; 
     width:auto;
     transition:transform .3s ease;
 }
@@ -110,17 +110,17 @@ html{ font-size:18px; }                     /* MOD: base móviles */
 
 /* ============  Formulario de reserva  =========================== */
 .form-reserva .form-select,
-.form-reserva .btn{ margin-bottom:1.1rem; } /* MOD */
+.form-reserva .btn{ margin-bottom:1.1rem; } 
 
 @media (min-width:768px){
-    .form-reserva{ max-width:700px; margin:0 auto; } /* MOD */
+    .form-reserva{ max-width:700px; margin:0 auto; } 
 }
 
 /* ----------  Campos y botones globales  ------------------------- */
 .form-control,
 .form-select{
-    padding:1rem 1.5rem;       /* MOD: mayor “tacto” */
-    font-size:1.05rem;         /* MOD */
+    padding:1rem 1.5rem;       /* mayor “tacto” */
+    font-size:1.05rem; 
 }
 
 /* ----------  Campo contraseña + icono  -------------------------- */
@@ -142,11 +142,11 @@ html{ font-size:18px; }                     /* MOD: base móviles */
 .jumbotron .display-5{
     display:inline-block;
     animation:pulseSize 4s ease-in-out infinite;
-    font-size:3.8rem;          /* MOD: antes 3.5 rem */
+    font-size:3.8rem; 
     font-weight:700;
 }
 
-/* FIX 23-may-2025 → título, lead y botón del jumbotron más contenidos en móviles */
+/* título, lead y botón del jumbotron más contenidos en móviles */
 @media (max-width:414px){
     .jumbotron .display-5{ font-size:2.3rem; }
     .jumbotron .lead{ font-size:1.3rem; }
@@ -157,12 +157,12 @@ html{ font-size:18px; }                     /* MOD: base móviles */
 }
 
 .jumbotron .lead{              /* texto bajo el título */
-    font-size:1.6rem;          /* MOD: +0.1 rem */
+    font-size:1.6rem; 
 }
 
 .jumbotron .btn-success{
-    padding:1.1rem 2.4rem;     /* MOD */
-    font-size:1.4rem;          /* MOD */
+    padding:1.1rem 2.4rem; 
+    font-size:1.4rem; 
     transition:transform .25s ease;
 }
 .jumbotron .btn-success:hover{ transform:scale(1.12); }
@@ -172,12 +172,12 @@ html{ font-size:18px; }                     /* MOD: base móviles */
 
 .about-text h2,.about-text h3{
     text-align:center;
-    margin-top:1.45rem;        /* MOD */
-    margin-bottom:1.2rem;      /* MOD */
+    margin-top:1.45rem; 
+    margin-bottom:1.2rem; 
 }
-.about-text ol{ padding-left:1.35rem; } /* MOD */
+.about-text ol{ padding-left:1.35rem; } 
 
 @media (max-width:575.98px){
-    .about-text h2{ font-size:2rem; }  /* MOD */
-    .about-text h3{ font-size:1.75rem; } /* MOD */
+    .about-text h2{ font-size:2rem; } 
+    .about-text h3{ font-size:1.75rem; } 
 }

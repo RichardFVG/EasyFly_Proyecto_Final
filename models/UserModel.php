@@ -9,14 +9,14 @@ class UserModel {
         return $stmt->execute([$name,$email,password_hash($pass,PASSWORD_BCRYPT)]);
     }
 
-    /** Busca por email exclusivamente (uso interno antiguo) */
+    /** Busca por email exclusivamente */
     public function findByEmail($email){
         $stmt=$this->db->prepare('SELECT * FROM usuarios WHERE email=?');
         $stmt->execute([$email]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    /** NUEVO: busca por email **o** por nombre de usuario */
+    /** busca por email **o** por nombre de usuario */
     public function findByIdentifier($identifier){
         $stmt = $this->db->prepare(
             'SELECT * FROM usuarios WHERE email = ? OR nombre = ?'
@@ -37,7 +37,7 @@ class UserModel {
     }
 
     /* ================================================================
-     *  NUEVOS MÉTODOS DE ACTUALIZACIÓN
+     *  MÉTODOS DE ACTUALIZACIÓN
      * ================================================================ */
 
     public function updateName($id, $name){

@@ -1,4 +1,3 @@
-
 <?php include __DIR__.'/partials/header.php'; ?>
 <div class="alert alert-success">
 <h3>¡Reserva Confirmada!</h3>

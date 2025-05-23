@@ -1,4 +1,3 @@
-
 <?php
 class AdminController {
     private $pdo;

@@ -1,9 +1,9 @@
--- EasyFly database schema   (v3 – 20 may 2025)
+-- EasyFly
 DROP DATABASE IF EXISTS easyfly;
 CREATE DATABASE easyfly DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE easyfly;
 
--- Users ---------------------------------------------------------
+-- Usuarios ---------------------------------------------------------
 CREATE TABLE usuarios (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nombre VARCHAR(100),
@@ -12,7 +12,7 @@ CREATE TABLE usuarios (
   is_admin TINYINT DEFAULT 0
 );
 
--- Flights -------------------------------------------------------
+-- Vuelos -------------------------------------------------------
 CREATE TABLE vuelos (
   id INT AUTO_INCREMENT PRIMARY KEY,
   pais_destino VARCHAR(80),
@@ -30,7 +30,6 @@ CREATE TABLE reservas (
   codigo_reserva VARCHAR(20),
   fecha_reserva TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-  /* NUEVOS CAMPOS */
   fecha_vuelo DATETIME NOT NULL,       -- día y hora elegidos por el usuario
   origen VARCHAR(255)             NULL,
   destino_detalle VARCHAR(255)    NULL,
@@ -49,7 +48,7 @@ INSERT INTO usuarios (nombre,email,password,is_admin) VALUES
 ('Administrador', 'richi3fvg@gmail.com', '$2b$12$olYOUA7WLZmAPdeV/kQbuuKYDQ5wHW/j3Qk/5iJzTUDTL04JNo02O', 1),
 ('Richard', 'the4lpha0ne@gmail.com', '$2y$10$PE/sbSL83uZzNKI2RhUgtuUZ5.IJQL9V8QnpvgW6xJ5XfECEStfKa', 0);
 
--- Flights data --------------------------------------------------
+-- Datos de los Vuelos --------------------------------------------------
 INSERT INTO vuelos (pais_destino, aerolineas, capacidad, plazas_disponibles, precio) VALUES
 ('Argentina','Iberia,American Airlines,Delta Airlines',180,180,470),
 ('Brasil','Iberia,American Airlines,Delta Airlines',175,175,425),
