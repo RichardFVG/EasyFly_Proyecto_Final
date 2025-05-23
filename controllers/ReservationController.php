@@ -19,7 +19,7 @@ class ReservationController {
             exit;
         }
 
-        /* ----------  Datos recibidos  -------------------------------- */
+        /* ----------  Datos recibidos  ---------- */
         $region      = $_POST['region_origen']      ?? '';
         $aeropOrig   = $_POST['aeropuerto_origen']  ?? '';
         $tipoPasaj   = $_POST['tipo_pasajero']      ?? '';
@@ -30,12 +30,9 @@ class ReservationController {
         $aeropDest   = $_POST['aeropuerto_destino'] ?? '';
         $fechaVueloR = $_POST['fecha_vuelo']        ?? '';
 
-        /* ----------  Validar fecha y hora de vuelo  ------------------- */
+        /* ----------  Validar fecha y hora de vuelo  ---------- */
         $tzCanary = new DateTimeZone('Atlantic/Canary');
-
         try {
-            /* <input type="datetime-local"> llega sin zona ⇒ se interpreta
-               explícitamente como hora local (Canarias)                  */
             $dtVuelo = new DateTime($fechaVueloR ?: 'now', $tzCanary);
         } catch (Exception $e){
             $_SESSION['flight_error'] = 'Fecha u hora de vuelo no válidas.';
@@ -43,9 +40,9 @@ class ReservationController {
             exit;
         }
 
-        $ahora    = new DateTime('now', $tzCanary);
-        $diffSeg  = $dtVuelo->getTimestamp() - $ahora->getTimestamp(); // positivo ⇒ futuro
-        if ($diffSeg < 300){                                          // 5 min = 300 s
+        $ahora   = new DateTime('now', $tzCanary);
+        $diffSeg = $dtVuelo->getTimestamp() - $ahora->getTimestamp();
+        if ($diffSeg < 300){
             $_SESSION['flight_error'] =
               'La fecha del vuelo debe ser, como mínimo, 5 minutos posterior a la actual.';
             header('Location: default.php?controller=flight&action=list');
@@ -53,32 +50,24 @@ class ReservationController {
         }
         $fechaVuelo = $dtVuelo->format('Y-m-d H:i:s');
 
-        /* ----------  Mapas base (precio + duración)  ----------------- */
+        /* ----------  Precios base y duraciones ---------- */
         $basePrices = [
           'Argentina'=>470,'Brasil'=>425,'Francia'=>50,'Alemania'=>60,
           'Italia'=>45,'Japón'=>400,'México'=>230,'España'=>25,
           'Reino Unido'=>60,'Estados Unidos'=>190
         ];
-
-        /*  Duraciones de vuelo directas (origen → destino)              */
         $flightDurations = [
           'Islas Canarias' => [
-              'Argentina'       => '11 horas',
-              'Brasil'          => '8 horas 30 minutos',
-              'Francia'         => '4 horas',
-              'Alemania'        => '4 horas 30 minutos',
-              'Italia'          => '4 horas',
-              'México'          => '11 horas',
-              'España'          => '2 horas 30 minutos',
-              'Reino Unido'     => '4 horas',
-              'Estados Unidos'  => '7 horas',
+              'Argentina'=>'11 horas','Brasil'=>'8 horas 30 minutos',
+              'Francia'=>'4 horas','Alemania'=>'4 horas 30 minutos',
+              'Italia'=>'4 horas','México'=>'11 horas',
+              'España'=>'2 horas 30 minutos','Reino Unido'=>'4 horas',
+              'Estados Unidos'=>'7 horas',
           ],
-          'Península' => [
-              'Japón'           => '14 horas 30 minutos',
-          ],
+          'Península' => ['Japón'=>'14 horas 30 minutos'],
         ];
 
-        /* ----------  Validaciones varias  ---------------------------- */
+        /* ----------  Validaciones ---------- */
         if (!isset($basePrices[$paisDest])){
             $_SESSION['flight_error'] = 'País de destino no válido.';
             header('Location: default.php?controller=flight&action=list');
@@ -97,44 +86,37 @@ class ReservationController {
             exit;
         }
 
-        /* ----------  Cálculo de precio  ------------------------------ */
+        /* ----------  Cálculo de precio ---------- */
         $precioBase = $basePrices[$paisDest];
         $precio     = $precioBase;
+        if ($tipoPasaj === 'menor')     $precio *= 0.75;
+        if ($equipaje   === 'si')       $precio *= 1.25;
+        if ($clase      === 'business') $precio *= 3;
+        if ($mascota    === 'si')       $precio += $precioBase * 0.80;
 
-        if ($tipoPasaj === 'menor')        $precio *= 0.75; // –25 %
-        if ($equipaje   === 'si')          $precio *= 1.25; // +25 %
-        if ($clase      === 'business')    $precio *= 3;    // +200 %
-        if ($mascota    === 'si')          $precio += $precioBase * 0.80; // +80 % base
-
-        /* ----------  Duración del vuelo  ----------------------------- */
         $duracion = $flightDurations[$region][$paisDest] ?? '—';
 
-        /* ----------  Detalle textual  -------------------------------- */
+        /* ----------  Detalle textual ---------- */
         $detalle = [
-            'Origen'                 => "$region – $aeropOrig",
-            'Tipo Pasajero'          => $tipoPasaj === 'menor'
-                                         ? 'Menor de edad' : 'Mayor de edad',
-            'Equipaje'               => $equipaje === 'si'
-                                         ? 'Incluye maleta facturada' : 'Sin maleta facturada',
-            'Clase'                  => $clase === 'business' ? 'Business' : 'Económica',
-            'Mascota'                => $mascota === 'si'
-                                         ? 'Incluye mascota en cabina' : 'Sin mascota',
-            'Destino'                => "$paisDest – $aeropDest",
+            'Origen'   => "$region – $aeropOrig",
+            'Tipo Pasajero' => $tipoPasaj === 'menor' ? 'Menor de edad' : 'Mayor de edad',
+            'Equipaje' => $equipaje === 'si' ? 'Incluye maleta facturada' : 'Sin maleta facturada',
+            'Clase'    => $clase === 'business' ? 'Business' : 'Económica',
+            'Mascota'  => $mascota === 'si' ? 'Incluye mascota en cabina' : 'Sin mascota',
+            'Destino'  => "$paisDest – $aeropDest",
             'Fecha y hora del vuelo' => (new DateTime($fechaVuelo))->format('d/m/Y H:i')
-            /* “Duración del vuelo” la mostraremos aparte,
-               manteniendo este array solo con la info previa.          */
         ];
 
-        /* ----------  Guardamos en sesión  ---------------------------- */
+        /* ----------  Guardar en sesión ---------- */
         $_SESSION['resumen_vuelo'] = [
             'precio'      => $precio,
             'detalle'     => $detalle,
             'pais'        => $paisDest,
             'fecha_vuelo' => $fechaVuelo,
-            'duracion'    => $duracion        //  <<--- NUEVO
+            'duracion'    => $duracion
         ];
 
-        require __DIR__ . '/../views/confirm_flight.php';
+        require __DIR__.'/../views/confirm_flight.php';
     }
 
     /* ------------------------------------------------------------------
@@ -147,7 +129,16 @@ class ReservationController {
             exit;
         }
 
-        $data   = $_SESSION['resumen_vuelo'];
+        /* --------  ¿Se añadió la info bancaria? -------- */
+        if (($_POST['bank_added'] ?? '0') !== '1'){
+            $_SESSION['bank_error'] =
+              'Debes añadir la información bancaria antes de confirmar la reserva.';
+            /* Mostramos otra vez la página de confirmación */
+            require __DIR__.'/../views/confirm_flight.php';
+            return;
+        }
+
+        $data = $_SESSION['resumen_vuelo'];
         unset($_SESSION['resumen_vuelo']);
 
         /* 1. Buscar vuelo disponible ---------------------------------- */
@@ -163,7 +154,7 @@ class ReservationController {
         }
 
         /* 2. Crear la reserva ---------------------------------------- */
-        $rm = new ReservationModel($this->pdo);
+        $rm     = new ReservationModel($this->pdo);
         $codigo = $rm->createDetailed(
             Auth::user()['id'],
             $vuelo['id'],
@@ -178,7 +169,7 @@ class ReservationController {
             $detalleHtml .= "<strong>$k:</strong> ".htmlspecialchars($v).'<br>';
             if ($k === 'Fecha y hora del vuelo'){
                 $detalleHtml .= '<strong>Duración del vuelo:</strong> '
-                              . htmlspecialchars($data['duracion']) . '<br>';
+                              . htmlspecialchars($data['duracion']).'<br>';
             }
         }
         $detalleHtml .= "<strong>Precio final:</strong> €".number_format($data['precio'],2).'<br>';
@@ -187,7 +178,7 @@ class ReservationController {
         sendConfirmation(Auth::user()['email'], Auth::user()['nombre'], $detalleHtml);
 
         /* 4. Vista OK ------------------------------------------------- */
-        require __DIR__ . '/../views/confirm.php';
+        require __DIR__.'/../views/confirm.php';
     }
 
     /* ------------------------------------------------------------------

@@ -74,7 +74,7 @@ body.bg-light {
 @media (min-width: 768px){
     .form-reserva{
         max-width: 640px;
-        margin: 0 auto;              /* centrado suave en pantallas medias-grandes  */
+        margin: 0 auto;              /* centrado suave en pantallas medias-grandes */
     }
 }
 
@@ -104,4 +104,9 @@ body.bg-light {
     user-select: none;          /* estándar */
 
     stroke: #00c7be;
+}
+
+/* ----------  NUEVO: estado “información bancaria añadida”  ---------- */
+.btn-bank-added{
+    color: #00FFFF !important;   /* texto cian                        */
 }
