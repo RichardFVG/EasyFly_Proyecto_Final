@@ -29,18 +29,29 @@ class UserController {
         require __DIR__ . '/../views/login.php';
     }
 
+    /** Registro con validación de campos y formato de email */
     public function register(){
         if ($_SERVER['REQUEST_METHOD'] === 'POST'){
-            $name  = $_POST['name']     ?? '';
-            $email = $_POST['email']    ?? '';
-            $pass  = $_POST['password'] ?? '';
+            $name  = trim($_POST['name']     ?? '');
+            $email = trim($_POST['email']    ?? '');
+            $pass  = $_POST['password']      ?? '';
 
-            $this->model->create($name, $email, $pass);
-
-            header('Location: default.php?controller=user&action=login');
-            exit;
+            /* ----------  Validaciones  ---------- */
+            if ($name === '' || $email === '' || $pass === ''){
+                $error = 'Todos los campos son obligatorios.';
+            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)){
+                $error = 'El email introducido no es válido.';
+            } elseif ($this->model->findByEmail($email)){
+                $error = 'Ese email ya está en uso.';
+            } else {
+                /* Registro correcto */
+                $this->model->create($name, $email, $pass);
+                header('Location: default.php?controller=user&action=login');
+                exit;
+            }
         }
 
+        /* Carga de la vista (con posible $error definido arriba) */
         require __DIR__ . '/../views/register.php';
     }
 
@@ -84,7 +95,7 @@ class UserController {
     }
 
     /* ================================================================
-     *  NUEVOS MÉTODOS: actualización segura de nombre y email
+     *  MÉTODOS DE ACTUALIZACIÓN SEGUROS
      * ================================================================ */
 
     /** POST: new_name + password */
