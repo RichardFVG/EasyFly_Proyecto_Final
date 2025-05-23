@@ -1,5 +1,9 @@
 
 </div> <!-- container -->
+<br>
+<br>
+<br>
+
 <hr>
 <footer class="footer">
     <p>&nbsp;&nbsp;© EasyFly, Richard Francisco Vaca Garcia, 

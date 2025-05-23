@@ -43,16 +43,20 @@ if (isset($_SESSION['ocultar_aviso'])) {
 
 $weather = getWeatherData();
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+
+<!--  Mantiene la anchura lógica del viewport y evita zooms raros   -->
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
 <title>EasyFly - RFVG</title>
 
-<!-- Favicon ----------------------------------------------------------------->
 <link rel="icon" type="image/png" href="https://i.postimg.cc/dVSggc3v/RFVG.png">
 
-<!-- Bootstrap & hoja de estilos --------------------------------------------->
+<!-- Bootstrap + CSS propio -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="assets/css/style.css" rel="stylesheet">
 </head>

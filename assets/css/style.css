@@ -1,171 +1,183 @@
-/* ----------  Estilos globales  ---------- */
-body.bg-light {
-    background-color: #f8f9fa !important;
+/* --------  Nada sobresale del viewport ------ */
+*{ box-sizing:border-box; }
+
+img,svg,video,canvas,iframe,figure{
+    max-width:100%;
+    height:auto;
+    display:block;
 }
 
-/* ----------  Menú hamburguesa (responsive)  ---------- */
-@media (max-width: 991.98px) {
-    .navbar-collapse {
-        background-color: #0d6efd;      /* mismo azul que .bg-primary             */
-        padding: 1rem;                  /* respiración alrededor de los enlaces   */
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+body{
+    overflow-x:hidden;          /* impide scroll horizontal forzado  */
+    background-color:#f8f9fa !important;
+}
+
+/* --------------------------------------------------------------
+   SISTEMA TIPOGRÁFICO RESPONSIVE
+   -------------------------------------------------------------- */
+html{ font-size:18px; }                     /* MOD: base móviles */
+@media (min-width:1200px){ html{ font-size:19px; } }  /* MOD: desktop +1 px */
+@media (max-width:414px){  html{ font-size:20px; } }  /* MOD: XS-S +2 px */
+/* FIX 23-may-2025 → evitar que teléfonos muy estrechos (< 360 px) agranden demasiado */
+@media (max-width:359.98px){ html{ font-size:17px; } }
+
+/* =================================================================
+   AJUSTES EXTRA para móviles muy pequeños (≤ 414 px)
+   ================================================================= */
+@media (max-width:414px){
+    body .container{ padding-left:1.15rem; padding-right:1.15rem; } /* MOD */
+
+    .btn,.btn-sm,
+    .form-control,.form-select{
+        padding:1.05rem 1.6rem;      /* MOD */
+        font-size:1.1rem;            /* MOD */
     }
-    .navbar-collapse .nav-link {
-        color: #ffffff !important;
-        font-weight: 500;
-        margin: 0.3rem 0;
+
+    table{ font-size:1.05rem; }      /* MOD */
+
+    h1,.display-5{ font-size:2.6rem; }  /* MOD */
+    h2{ font-size:2.25rem; }            /* MOD */
+    h3{ font-size:1.85rem; }            /* MOD */
+
+    .navbar-brand .logo-img{ height:60px; }  /* MOD */
+    .destinations .dest-img{ height:76px; }  /* MOD */
+}
+
+/* ----------  Menú hamburguesa (≤ 991 px)  ----------------------- */
+@media (max-width:991.98px){
+    .navbar-collapse{
+        background-color:#0d6efd;
+        padding:1.15rem;       /* MOD */
+    }
+    .navbar-collapse .nav-link{
+        color:#ffffff !important;
+        font-weight:500;
+        margin:.5rem 0;        /* MOD */
+        font-size:1.25rem;     /* MOD */
     }
 }
 
-/* ----------  Logo en la barra de navegación  ---------- */
+/* FIX 23-may-2025 → hacer fluido el contenedor del navbar en <= 575 px */
+@media (max-width:575.98px){
+    .navbar .container{
+        max-width:100% !important;
+        padding-left:1rem;
+        padding-right:1rem;
+    }
+}
+
+/* ----------  Logo barra de navegación  -------------------------- */
 .navbar-brand .logo-img{
-    height: 40px;          /* alto lógico para pantallas ≥576 px      */
-    width: auto;
-    margin-right: .5rem;   /* separación del texto “EasyFly”          */
+    height:72px;               /* MOD: antes 64 px */
+    width:auto;
+    margin-right:.6rem;
 }
 
-/* Ajuste de tamaño en móviles muy pequeños */
-@media (max-width: 575.98px){
-    .navbar-brand .logo-img{
-        height: 32px;
-    }
+/* ----------  Enlaces de navegación (vista no colapsada) --------- */
+.navbar-nav .nav-link{
+    font-size:1.25rem;         /* MOD: +0.1 rem */
+    font-weight:500;
 }
 
-/* ----------  Nombre de usuario en la barra de navegación  ---------- */
+/* ----------  Nombre de usuario  --------------------------------- */
 .user-name{
-    color: #ffffff;
-    font-weight: 500;
-    font-size: 1rem;
-    line-height: 1;
+    color:#ffffff;
+    font-weight:500;
+    font-size:1.25rem;         /* MOD: +0.1 rem */
+    line-height:1;
 }
+@media (max-width:575.98px){ .user-name{ display:none !important; } }
 
-/* Ocultar el nombre en pantallas muy pequeñas (< 576 px) */
-@media (max-width: 575.98px){
-    .user-name{
-        display: none !important;
-    }
-}
-
-/* ----------  Banderas de destinos  ---------- */
+/* ----------  Banderas de destinos  ------------------------------ */
 .destinations{
-    display: flex;
-    flex-wrap: wrap;                 /* permite varias filas en pantallas estrechas */
-    justify-content: center;
-    gap: 1rem;                       /* separación uniforme entre imágenes          */
-    margin-top: 1.5rem;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:1.45rem;               /* MOD */
+    margin-top:2.2rem;         /* MOD */
 }
-
 .destinations .dest-img{
-    height: 48px;                    /* tamaño base                                 */
-    width: auto;
+    height:80px;               /* MOD: antes 72px */
+    width:auto;
+    transition:transform .3s ease;
 }
+.destinations .dest-img:hover{ transform:rotate(-25deg); }
 
-@media (max-width: 575.98px){
-    .destinations .dest-img{
-        height: 40px;                /* un poco más pequeñas en móviles muy chicos  */
-    }
-}
-
-/* ============  NUEVO: formulario de reserva  ============ */
+/* ============  Formulario de reserva  =========================== */
 .form-reserva .form-select,
-.form-reserva .btn{
-    margin-bottom: .9rem;
+.form-reserva .btn{ margin-bottom:1.1rem; } /* MOD */
+
+@media (min-width:768px){
+    .form-reserva{ max-width:700px; margin:0 auto; } /* MOD */
 }
 
-@media (min-width: 768px){
-    .form-reserva{
-        max-width: 640px;
-        margin: 0 auto;              /* centrado suave en pantallas medias-grandes */
-    }
+/* ----------  Campos y botones globales  ------------------------- */
+.form-control,
+.form-select{
+    padding:1rem 1.5rem;       /* MOD: mayor “tacto” */
+    font-size:1.05rem;         /* MOD */
 }
 
-/* =========================================================
-   NUEVO ▸ Campo de contraseña con icono mostrar/ocultar
-   ========================================================= */
-.password-wrapper{
-    position: relative;
-}
-.password-wrapper input.form-control{
-    padding-right: 46px;    /* deja espacio para el icono */
-}
+/* ----------  Campo contraseña + icono  -------------------------- */
+.password-wrapper{ position:relative; }
+.password-wrapper input.form-control{ padding-right:46px; }
 .password-wrapper .toggle-password{
-    position: absolute;
-    right: 12px;            /* separación del borde del input */
-    top: 0;
-    bottom: 0;
-    display: flex;          /* centra verticalmente el SVG    */
-    align-items: center;
-
-    width: 32px;
-    height: 32px;
-    cursor: pointer;
-
-    /* desactiva selección de texto/icono (primero prefijo) */
-    -webkit-user-select: none;  /* Safari / iOS */
-    user-select: none;          /* estándar */
-
-    stroke: #00c7be;
+    position:absolute; right:12px; top:0; bottom:0;
+    display:flex; align-items:center;
+    width:32px; height:32px; cursor:pointer;
+    -webkit-user-select:none; user-select:none;
+    stroke:#00c7be;
 }
 
-/* ----------  NUEVO: estado “información bancaria añadida”  ---------- */
-.btn-bank-added{
-    color: #00FFFF !important;   /* texto cian                        */
-}
+/* ----------  Estado “bancario añadido”  ------------------------- */
+.btn-bank-added{ color:#00FFFF !important; }
 
-/* ====================================================================
-   NUEVO ▸ Animaciones y efectos visuales
-   ==================================================================== */
-
-/* 1. Efecto de rotación en las banderas al pasar el ratón ------------ */
-.destinations .dest-img{
-    transition: transform 0.3s ease;     /* animación suave              */
-}
-.destinations .dest-img:hover{
-    transform: rotate(-25deg);           /* giro antihorario ligero      */
-}
-
-/* 2. Animación de pulso para el título de bienvenida ----------------- */
-@keyframes pulseSize{
-    0%,100%{ transform: scale(1); }
-    50%   { transform: scale(1.10); }
-}
+/* ----------  Animaciones Home  ---------------------------------- */
+@keyframes pulseSize{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.1);} }
 .jumbotron .display-5{
-    display: inline-block;               /* asegura que transform aplique */
-    animation: pulseSize 4s ease-in-out infinite;
+    display:inline-block;
+    animation:pulseSize 4s ease-in-out infinite;
+    font-size:3.8rem;          /* MOD: antes 3.5 rem */
+    font-weight:700;
 }
 
-/* 3. Efecto de escala al hover en el botón “Buscar Vuelos” ----------- */
+/* FIX 23-may-2025 → título, lead y botón del jumbotron más contenidos en móviles */
+@media (max-width:414px){
+    .jumbotron .display-5{ font-size:2.3rem; }
+    .jumbotron .lead{ font-size:1.3rem; }
+    .jumbotron .btn-success{
+        padding:.9rem 1.8rem;
+        font-size:1.15rem;
+    }
+}
+
+.jumbotron .lead{              /* texto bajo el título */
+    font-size:1.6rem;          /* MOD: +0.1 rem */
+}
+
 .jumbotron .btn-success{
-    transition: transform 0.25s ease;
+    padding:1.1rem 2.4rem;     /* MOD */
+    font-size:1.4rem;          /* MOD */
+    transition:transform .25s ease;
 }
-.jumbotron .btn-success:hover{
-    transform: scale(1.12);              /* se agranda ligeramente        */
-}
+.jumbotron .btn-success:hover{ transform:scale(1.12); }
 
-/* --------------------------------------------------------------------
-   NUEVO ▸ Página “Sobre Nosotros”
-   -------------------------------------------------------------------- */
-.about-text{
-    text-align: justify;
-}
+/* ----------  Página “Sobre Nosotros” ---------------------------- */
+.about-text{ text-align:justify; }
 
-/* --- Nuevos ajustes tipográficos y espaciales dentro de .about-text --- */
-.about-text h2,
-.about-text h3{
-    text-align: center;
-    margin-top: 1.2rem;
-    margin-bottom: 1rem;
+.about-text h2,.about-text h3{
+    text-align:center;
+    margin-top:1.45rem;        /* MOD */
+    margin-bottom:1.2rem;      /* MOD */
 }
+.about-text ol{ padding-left:1.35rem; } /* MOD */
 
-.about-text ol{
-    padding-left: 1.25rem;               /* sangría cómoda para la lista */
-}
-
-/* Escalado de títulos en móviles muy pequeños */
-@media (max-width: 575.98px){
-    .about-text h2{
-        font-size: 1.5rem;
-    }
-    .about-text h3{
-        font-size: 1.25rem;
-    }
+@media (max-width:575.98px){
+    .about-text h2{ font-size:2rem; }  /* MOD */
+    .about-text h3{ font-size:1.75rem; } /* MOD */
 }
