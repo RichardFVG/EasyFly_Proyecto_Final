@@ -1,6 +1,6 @@
 <?php
 /*  Página de confirmación de vuelo con resumen y botón final
-----------------------------------------------------------------*/
+ ----------------------------------------------------------------*/
 include __DIR__.'/partials/header.php';
 Auth::start();
 if (!Auth::check()){
@@ -28,6 +28,12 @@ if (!$datos){
           <li class="list-group-item">
               <strong><?= $k ?>:</strong> <?= htmlspecialchars($v) ?>
           </li>
+          <?php if ($k === 'Fecha y hora del vuelo'): ?>
+            <li class="list-group-item">
+              <strong>Duración del vuelo:</strong>
+              <?= htmlspecialchars($datos['duracion']) ?>
+            </li>
+          <?php endif; ?>
         <?php endforeach; ?>
     </ul>
 

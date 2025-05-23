@@ -19,7 +19,7 @@ class ReservationController {
             exit;
         }
 
-        // --- Datos recibidos ------------------------------------------
+        /* ----------  Datos recibidos  -------------------------------- */
         $region      = $_POST['region_origen']      ?? '';
         $aeropOrig   = $_POST['aeropuerto_origen']  ?? '';
         $tipoPasaj   = $_POST['tipo_pasajero']      ?? '';
@@ -30,12 +30,12 @@ class ReservationController {
         $aeropDest   = $_POST['aeropuerto_destino'] ?? '';
         $fechaVueloR = $_POST['fecha_vuelo']        ?? '';
 
-        //  Validar fecha y hora de vuelo -------------------------------
+        /* ----------  Validar fecha y hora de vuelo  ------------------- */
         $tzCanary = new DateTimeZone('Atlantic/Canary');
 
         try {
-            /* El valor del <input type="datetime-local"> llega sin zona
-               ⇒ lo interpretamos explícitamente como hora local (Canarias) */
+            /* <input type="datetime-local"> llega sin zona ⇒ se interpreta
+               explícitamente como hora local (Canarias)                  */
             $dtVuelo = new DateTime($fechaVueloR ?: 'now', $tzCanary);
         } catch (Exception $e){
             $_SESSION['flight_error'] = 'Fecha u hora de vuelo no válidas.';
@@ -43,25 +43,42 @@ class ReservationController {
             exit;
         }
 
-        /* Debe estar, como mínimo, 5 min por delante del “ahora” */
-        $ahora = new DateTime('now', $tzCanary);
-        $diffSeg = $dtVuelo->getTimestamp() - $ahora->getTimestamp();   // positivo ⇒ futuro
-        if ($diffSeg < 300){                                            // 300 s = 5 min
+        $ahora    = new DateTime('now', $tzCanary);
+        $diffSeg  = $dtVuelo->getTimestamp() - $ahora->getTimestamp(); // positivo ⇒ futuro
+        if ($diffSeg < 300){                                          // 5 min = 300 s
             $_SESSION['flight_error'] =
-                'La fecha del vuelo debe ser, como mínimo, 5 minutos posterior a la actual.';
+              'La fecha del vuelo debe ser, como mínimo, 5 minutos posterior a la actual.';
             header('Location: default.php?controller=flight&action=list');
             exit;
         }
         $fechaVuelo = $dtVuelo->format('Y-m-d H:i:s');
 
-        //  Mapas base --------------------------------------------------
+        /* ----------  Mapas base (precio + duración)  ----------------- */
         $basePrices = [
           'Argentina'=>470,'Brasil'=>425,'Francia'=>50,'Alemania'=>60,
           'Italia'=>45,'Japón'=>400,'México'=>230,'España'=>25,
           'Reino Unido'=>60,'Estados Unidos'=>190
         ];
 
-        //  Validaciones -----------------------------------------------
+        /*  Duraciones de vuelo directas (origen → destino)              */
+        $flightDurations = [
+          'Islas Canarias' => [
+              'Argentina'       => '11 horas',
+              'Brasil'          => '8 horas 30 minutos',
+              'Francia'         => '4 horas',
+              'Alemania'        => '4 horas 30 minutos',
+              'Italia'          => '4 horas',
+              'México'          => '11 horas',
+              'España'          => '2 horas 30 minutos',
+              'Reino Unido'     => '4 horas',
+              'Estados Unidos'  => '7 horas',
+          ],
+          'Península' => [
+              'Japón'           => '14 horas 30 minutos',
+          ],
+        ];
+
+        /* ----------  Validaciones varias  ---------------------------- */
         if (!isset($basePrices[$paisDest])){
             $_SESSION['flight_error'] = 'País de destino no válido.';
             header('Location: default.php?controller=flight&action=list');
@@ -69,45 +86,52 @@ class ReservationController {
         }
         if ($paisDest === 'Japón' && $region !== 'Península'){
             $_SESSION['flight_error'] =
-                'Los vuelos a Japón solo están disponibles desde la Península.';
+              'Los vuelos a Japón solo están disponibles desde la Península.';
             header('Location: default.php?controller=flight&action=list');
             exit;
         }
         if ($paisDest === 'España' && $aeropDest === $aeropOrig){
             $_SESSION['flight_error'] =
-                'El aeropuerto de destino en España no puede coincidir con el de origen.';
+              'El aeropuerto de destino en España no puede coincidir con el de origen.';
             header('Location: default.php?controller=flight&action=list');
             exit;
         }
 
-        //  Cálculo de precio ------------------------------------------
+        /* ----------  Cálculo de precio  ------------------------------ */
         $precioBase = $basePrices[$paisDest];
         $precio     = $precioBase;
 
-        if ($tipoPasaj === 'menor')   $precio *= 0.75; // –25 %
-        if ($equipaje   === 'si')     $precio *= 1.25; // +25 %
-        if ($clase      === 'business') $precio *= 3;  // +200 %
-        if ($mascota === 'si')        $precio += $precioBase * 0.80; // +80 % base
+        if ($tipoPasaj === 'menor')        $precio *= 0.75; // –25 %
+        if ($equipaje   === 'si')          $precio *= 1.25; // +25 %
+        if ($clase      === 'business')    $precio *= 3;    // +200 %
+        if ($mascota    === 'si')          $precio += $precioBase * 0.80; // +80 % base
 
-        //  Detalle textual --------------------------------------------
+        /* ----------  Duración del vuelo  ----------------------------- */
+        $duracion = $flightDurations[$region][$paisDest] ?? '—';
+
+        /* ----------  Detalle textual  -------------------------------- */
         $detalle = [
-            'Origen'              => "$region – $aeropOrig",
-            'Tipo Pasajero'       => $tipoPasaj === 'menor' ? 'Menor de edad' : 'Mayor de edad',
-            'Equipaje'            => $equipaje === 'si'
-                                      ? 'Incluye maleta facturada' : 'Sin maleta facturada',
-            'Clase'               => $clase === 'business' ? 'Business' : 'Económica',
-            'Mascota'             => $mascota === 'si'
-                                      ? 'Incluye mascota en cabina' : 'Sin mascota',
-            'Destino'             => "$paisDest – $aeropDest",
+            'Origen'                 => "$region – $aeropOrig",
+            'Tipo Pasajero'          => $tipoPasaj === 'menor'
+                                         ? 'Menor de edad' : 'Mayor de edad',
+            'Equipaje'               => $equipaje === 'si'
+                                         ? 'Incluye maleta facturada' : 'Sin maleta facturada',
+            'Clase'                  => $clase === 'business' ? 'Business' : 'Económica',
+            'Mascota'                => $mascota === 'si'
+                                         ? 'Incluye mascota en cabina' : 'Sin mascota',
+            'Destino'                => "$paisDest – $aeropDest",
             'Fecha y hora del vuelo' => (new DateTime($fechaVuelo))->format('d/m/Y H:i')
+            /* “Duración del vuelo” la mostraremos aparte,
+               manteniendo este array solo con la info previa.          */
         ];
 
-        //  Guardamos en sesión para la vista de confirmación ----------
+        /* ----------  Guardamos en sesión  ---------------------------- */
         $_SESSION['resumen_vuelo'] = [
             'precio'      => $precio,
             'detalle'     => $detalle,
             'pais'        => $paisDest,
-            'fecha_vuelo' => $fechaVuelo
+            'fecha_vuelo' => $fechaVuelo,
+            'duracion'    => $duracion        //  <<--- NUEVO
         ];
 
         require __DIR__ . '/../views/confirm_flight.php';
@@ -126,9 +150,9 @@ class ReservationController {
         $data   = $_SESSION['resumen_vuelo'];
         unset($_SESSION['resumen_vuelo']);
 
-        // 1. buscar vuelo disponible ----------------------------------
+        /* 1. Buscar vuelo disponible ---------------------------------- */
         $stmt = $this->pdo->prepare(
-            'SELECT * FROM vuelos WHERE pais_destino = ? AND plazas_disponibles > 0 LIMIT 1'
+          'SELECT * FROM vuelos WHERE pais_destino = ? AND plazas_disponibles > 0 LIMIT 1'
         );
         $stmt->execute([$data['pais']]);
         $vuelo = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -138,7 +162,7 @@ class ReservationController {
             exit;
         }
 
-        // 2. crear la reserva ----------------------------------------
+        /* 2. Crear la reserva ---------------------------------------- */
         $rm = new ReservationModel($this->pdo);
         $codigo = $rm->createDetailed(
             Auth::user()['id'],
@@ -148,17 +172,21 @@ class ReservationController {
             $data['fecha_vuelo']
         );
 
-        // 3. email de confirmación -----------------------------------
+        /* 3. Correo de confirmación ----------------------------------- */
         $detalleHtml = '';
         foreach ($data['detalle'] as $k => $v){
             $detalleHtml .= "<strong>$k:</strong> ".htmlspecialchars($v).'<br>';
+            if ($k === 'Fecha y hora del vuelo'){
+                $detalleHtml .= '<strong>Duración del vuelo:</strong> '
+                              . htmlspecialchars($data['duracion']) . '<br>';
+            }
         }
         $detalleHtml .= "<strong>Precio final:</strong> €".number_format($data['precio'],2).'<br>';
         $detalleHtml .= "<strong>Código de reserva:</strong> $codigo";
 
         sendConfirmation(Auth::user()['email'], Auth::user()['nombre'], $detalleHtml);
 
-        // 4. vista ok -----------------------------------------------
+        /* 4. Vista OK ------------------------------------------------- */
         require __DIR__ . '/../views/confirm.php';
     }
 
