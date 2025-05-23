@@ -110,3 +110,33 @@ body.bg-light {
 .btn-bank-added{
     color: #00FFFF !important;   /* texto cian                        */
 }
+
+/* ====================================================================
+   NUEVO ▸ Animaciones y efectos visuales
+   ==================================================================== */
+
+/* 1. Efecto de rotación en las banderas al pasar el ratón ------------ */
+.destinations .dest-img{
+    transition: transform 0.3s ease;     /* animación suave              */
+}
+.destinations .dest-img:hover{
+    transform: rotate(-25deg);           /* giro antihorario ligero      */
+}
+
+/* 2. Animación de pulso para el título de bienvenida ----------------- */
+@keyframes pulseSize{
+    0%,100%{ transform: scale(1); }
+    50%   { transform: scale(1.10); }
+}
+.jumbotron .display-5{
+    display: inline-block;               /* asegura que transform aplique */
+    animation: pulseSize 4s ease-in-out infinite;
+}
+
+/* 3. Efecto de escala al hover en el botón “Buscar Vuelos” ----------- */
+.jumbotron .btn-success{
+    transition: transform 0.25s ease;
+}
+.jumbotron .btn-success:hover{
+    transform: scale(1.12);              /* se agranda ligeramente        */
+}
